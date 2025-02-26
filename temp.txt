@@ -1,0 +1,11 @@
+zig makefile for compiling
+
+
+ARM = arm-none-eabi
+
+default:
+	zig build-obj -O ReleaseSmall -target thumb-freestanding-none -mcpu cortex_m0 -femit-bin=out/main -femit-asm --script src/linker.ld src/main.zig
+	$(ARM)-objcopy -O binary out/main.elf out/main.bin
+	$(ARM)-objdump -D out/main.elf > out/main.asm
+	uf2-util --bootrom include/bootrom.bin --progdata out/main.bin --output out/app.uf2
+
