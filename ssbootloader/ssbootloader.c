@@ -25,7 +25,14 @@ void boot() {
     // reset IOBank0 for gpio
     write32((volatile uint_32 *)(RESETS_BASE + 0x3000),
             1 << 5); // clear the reset register for IOBank 0
-    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 5)) ==
+    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 5)) !=
+           0) {
+    } // wait until the reset done register is written
+
+    // reset uart0
+    write32((volatile uint_32 *)(RESETS_BASE + 0x3000),
+            1 << 22); // clear the reset register for IOBank 0
+    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 22)) !=
            0) {
     } // wait until the reset done register is written
 
