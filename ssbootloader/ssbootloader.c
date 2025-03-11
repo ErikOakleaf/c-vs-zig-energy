@@ -1,6 +1,8 @@
 #define XIP_CTRL_BASE 0x14000000
 #define XIP_SSI_BASE 0x18000000
 #define RESETS_BASE 0x4000c000
+#define XOSC_BASE 0x40024000
+#define CLOCK_BASE 0x40008000
 
 #define CTRL0_XIP                                                              \
     (0b11111 << 16) |                                                          \
@@ -45,6 +47,22 @@ void boot() {
         destination++;
         source++;
     }
+
+    // set system clock to external crystal oscilator
+
+    write32((volatile uint_32 *)(XOSC_BASE), 0xaa0);    // set osc to 1_15MHZ
+    write32((volatile uint_32 *)(XOSC_BASE + 0xc), 47); // XOSC delay
+
+    write32((volatile uint_32 *)(XOSC_BASE + 0x2000), (0xfab << 12)); // enable xosc
+
+    while (((read32((volatile uint_32 *)(XOSC_BASE + 0x4))) & (1 << 31)) == 0) {
+    } // wait until clock is stable
+
+    // switch the system clock over to crystal osc
+    write32((volatile uint_32 *)(CLOCK_BASE + 0x30),
+            0x2); // set ref clock as xosc
+    write32((volatile uint_32 *)(CLOCK_BASE + 0x3c),
+            0); // set sys clock as xosc
 
     // jump to the start of sram
     void *sram = (void *)0x20000000;
