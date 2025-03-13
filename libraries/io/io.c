@@ -1,4 +1,4 @@
-#include "../include/io.h"
+#include "io.h"
 
 void write32(volatile uint_32 *address, uint_32 value) {
     *address = value;

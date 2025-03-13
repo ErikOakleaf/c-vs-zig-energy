@@ -1,8 +1,8 @@
-#include "../include/uart.h"
+#include "uart.h"
 
 void resetUart0() {
     write32((volatile uint_32 *)(RESETS_BASE + 0x3000), 1 << 22);
-    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 22)) !=
+    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 22)) ==
            0) {
     }
 } // wait until the reset done register is written
