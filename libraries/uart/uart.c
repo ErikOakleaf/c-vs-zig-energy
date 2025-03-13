@@ -1,16 +1,23 @@
 #include "uart.h"
 
+void enablePeriClock() {
+    write32((volatile uint_32 *)(CLOCK_BASE + CLK_PERI_CTRL),
+            (1 << 11) | (0x4 << 5));
+}
+
+void resetIOBank0() {
+    write32((volatile uint_32 *)(RESETS_BASE + 0x3000), 1 << 5);
+    while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 5)) ==
+           0) {
+    } // wait until the reset done register is written
+}
+
 void resetUart0() {
     write32((volatile uint_32 *)(RESETS_BASE + 0x3000), 1 << 22);
     while (((read32((volatile uint_32 *)(RESETS_BASE + 0x8))) & (1 << 22)) ==
            0) {
     }
 } // wait until the reset done register is written
-
-void enablePeriClock() {
-    write32((volatile uint_32 *)(CLOCK_BASE + CLK_PERI_CTRL),
-            (1 << 11) | (0x4 << 5));
-}
 
 void functionSelectUart() {
     write32((volatile uint_32 *)(IO_BANK0_BASE + GPIO0_CTRL), 2);
@@ -33,6 +40,8 @@ void enableTransmitReceive() {
 }
 
 void uart0Init() {
+    enablePeriClock();
+    resetIOBank0();
     resetUart0();
     functionSelectUart();
     setBaudRate();
