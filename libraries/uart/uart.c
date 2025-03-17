@@ -57,9 +57,16 @@ void uartSend(char character) {
     write32((volatile uint_32 *)(UART0_BASE + 0), (uint_32)character);
 }
 
+void uartSendString(char *str) {
+    while (*str) {
+        uartSend(*str++);
+    }
+} 
+
 char uartReceive() {
     while ((read32((volatile uint_32 *)(UART0_BASE + 0x18)) & (1 << 4)) != 0) {
     }
 
     return (char)read32((volatile uint_32 *)(UART0_BASE + 0));
 }
+

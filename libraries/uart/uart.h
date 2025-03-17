@@ -21,6 +21,7 @@ void enableFIFOs();
 void enableTransmitReceive();
 void uart0Init();
 void uartSend(char character);
+void uartSendString(char *str);
 char uartReceive();
 
 #endif 

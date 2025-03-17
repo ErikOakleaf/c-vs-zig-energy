@@ -56,6 +56,17 @@ pub fn uartSend(character: u8) void {
     // but the data bits in the data memory register
     io.write32(@ptrFromInt(UART0_BASE + 0), @intCast(character));
 }
+// void uartSendString(char *str) {
+//     while (*str) {
+//         uartSend(*str++);
+//     }
+// }
+
+pub fn uartSendString(str: []const u8) void {
+    for (str) |c| {
+        uartSend(c);
+    }
+}
 
 pub fn uartReceive() u8 {
     while ((io.read32(@ptrFromInt(UART0_BASE + 0x18)) & (1 << 4)) != 0) {}
