@@ -5,8 +5,7 @@
 void main(void) __attribute__((section(".main")));
 void main() {
     uart0Init();
-    timerInit(); 
-
+    timerInit();
 
     write32((volatile uint_32 *)(IO_BANK0_BASE + GPIO25_CTRL), 5);
     write32((volatile uint_32 *)(0xd0000000 + 0x024), (1 << 25));
@@ -21,5 +20,9 @@ void main() {
 
     uartSendString("\n");
 
-    uartSendUInt64(readTime());
+    for (int i = 0; i < 100; i++) {
+        uint_64 initTime = readTime();
+        uartSendUInt64(readTime() - initTime);
+        uartSend('\n');
+    }
 }
