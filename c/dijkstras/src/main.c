@@ -127,6 +127,7 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
 void main(void) __attribute__((section(".main")));
 void main() {
     uart0Init();
+    timerInit();
 
     int distances[GRAPH_SIZE];
     int previous[GRAPH_SIZE];
@@ -134,6 +135,7 @@ void main() {
     int heapLookup[GRAPH_SIZE];
 
     for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
+        uint_64 initTime = readTime();
         dijkstras((int *)dijkstrasTestDataArray[i].graph,
                   GRAPH_SIZE,
                   dijkstrasTestDataArray[i].source,
@@ -142,7 +144,11 @@ void main() {
                   previous,
                   minHeap,
                   heapLookup);
-        uartSendString("hello world\n");
+        uartSendString("graph: ");
+        uartSendInt(i);
+        uartSendString("\ntime to execute: ");
+        uartSendUInt64(readTime() - initTime);
+        uartSend('\n');
     }
 
     uartSendString("End of line ");
