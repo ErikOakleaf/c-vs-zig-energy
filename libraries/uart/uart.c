@@ -72,20 +72,50 @@ void uartSendInt(int num) {
         isNegative = 1;
         num = -num; // convert the number to positive for later conversion
     }
-
-    // Convert the number to string (in reverse order)
-    while (num > 0) {
-        int digit = 0;
-        while (num >= 10) {
-            num -= 10;
-            digit++;
+    // Handle zero explicitly
+    if (num == 0) {
+        buffer[i++] = '0';
+    } else {
+        // Convert the number to string (in reverse order)
+        while (num > 0) {
+            int digit = 0;
+            while (num >= 10) {
+                num -= 10;
+                digit++;
+            }
+            buffer[i++] = num + '0';
+            num = digit;
         }
-        buffer[i++] = num + '0';
-        num = digit;
     }
 
     if (isNegative) {
         buffer[i++] = '-';
+    }
+
+    // Now send the characters in the correct order by reversing the buffer
+    while (i--) {
+        uartSend(buffer[i]);
+    }
+}
+
+void uartSendUInt64(int num) {
+    char buffer[22]; // enough for a 64-bit integer
+    int i = 0;
+
+    // Handle zero explicitly
+    if (num == 0) {
+        buffer[i++] = '0';
+    } else {
+        // Convert the number to string (in reverse order)
+        while (num > 0) {
+            uint_64 digit = 0;
+            while (num >= 10) {
+                num -= 10;
+                digit++;
+            }
+            buffer[i++] = (char)num + '0';
+            num = digit;
+        }
     }
 
     // Now send the characters in the correct order by reversing the buffer

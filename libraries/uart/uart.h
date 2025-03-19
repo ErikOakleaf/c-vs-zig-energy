@@ -23,6 +23,7 @@ void uart0Init();
 void uartSend(char character);
 void uartSendString(char *str);
 void uartSendInt(int num);
+void uartSendUInt64(int num); 
 char uartReceive();
 
 #endif 
