@@ -99,6 +99,9 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
     initEmptyArrayInt0(visited, size);
     distances[source] = 0;
 
+    uartSendInt(destination);
+    uartSend('\n');
+
     // add the source node to the priority queue
     int heap_size = 0;
     insertNode(minHeap, heapLookup, &heap_size, (Vertex){0, source});
@@ -106,6 +109,11 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
     // always loop through the priority queue
     while (heap_size != 0) {
         Vertex current = dequeNode(minHeap, heapLookup, &heap_size);
+
+        if (visited[current.index]) {
+            continue;
+        }
+
         visited[current.index] = 1;
 
         int current_index = current.index;
@@ -124,13 +132,22 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
                     if (heapLookup[v] != -1) {
                         updateNode(minHeap, heapLookup, heap_size, v, alt);
                     } else {
-                        if (!visited[v]) {
-                            insertNode(minHeap, heapLookup, &heap_size, (Vertex){alt, v});
-                        }
+                        insertNode(minHeap, heapLookup, &heap_size, (Vertex){alt, v});
                     }
                 }
             }
         }
+    }
+
+    int final = destination;
+
+    uartSendInt(final + 1);
+    uartSendString(" -> ");
+
+    while (final != -1) {
+        uartSendInt(previous[final] + 1);
+        uartSendString(" -> ");
+        final = previous[final];
     }
 }
 
@@ -148,7 +165,7 @@ void main() {
     for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
         uint_64 initTime = readTime();
         dijkstras((int *)dijkstrasTestDataArray[i].graph,
-                  GRAPH_SIZE,
+                  50,
                   dijkstrasTestDataArray[i].source,
                   dijkstrasTestDataArray[i].destination,
                   distances,
@@ -156,6 +173,7 @@ void main() {
                   minHeap,
                   heapLookup,
                   visited);
+        uartSend('\n');
         uartSendString("graph: ");
         uartSendInt(i);
         uartSendString("\ntime to execute: ");
