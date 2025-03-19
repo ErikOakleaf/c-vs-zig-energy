@@ -12,7 +12,7 @@ setup:
 	-mkdir out 2>NUL || mkdir -p out 2>/dev/null || echo "out directory already exists"
 
 compile:
-	zig build
+	zig build --verbose
 
 link:
 	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) zig-out/main.o -o out/main.elf

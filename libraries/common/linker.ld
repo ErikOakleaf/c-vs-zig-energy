@@ -2,7 +2,7 @@ ENTRY(main)
 
 MEMORY
 {
-    sram : ORIGIN = 0x20000000, LENGTH = 0xFFFF
+    sram : ORIGIN = 0x20000000, LENGTH = 0x42000
 }
 
 SECTIONS

@@ -10,9 +10,11 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const optimize = b.standardOptimizeOption(.{
-        .preferred_optimize_mode = .ReleaseSmall,
-    });
+    // const optimize = b.standardOptimizeOption(.{
+    //     .preferred_optimize_mode = .ReleaseSmall,
+    // });
+
+    const optimize = std.builtin.OptimizeMode.ReleaseSmall;
 
     const obj = b.addObject(.{
         .name = "main",

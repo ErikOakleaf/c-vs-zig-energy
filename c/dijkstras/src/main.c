@@ -1,5 +1,8 @@
 #define GRAPH_SIZE 50
 
+#include "test_data.h"
+#include "uart.h"
+
 typedef struct {
     int distance;
     int index;
@@ -121,9 +124,26 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
     }
 }
 
+void main(void) __attribute__((section(".main")));
 void main() {
+    uart0Init();
+
     int distances[GRAPH_SIZE];
     int previous[GRAPH_SIZE];
     Vertex minHeap[GRAPH_SIZE];
     int heapLookup[GRAPH_SIZE];
+
+    for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
+        dijkstras((int *)dijkstrasTestDataArray[i].graph,
+                  GRAPH_SIZE,
+                  dijkstrasTestDataArray[i].source,
+                  dijkstrasTestDataArray[i].destination,
+                  distances,
+                  previous,
+                  minHeap,
+                  heapLookup);
+        uartSendString("hello world\n");
+    }
+
+    uartSendString("End of line ");
 }

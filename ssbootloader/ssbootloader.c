@@ -4,8 +4,8 @@
 #define XOSC_BASE 0x40024000
 #define CLOCK_BASE 0x40008000
 
-#define CTRL0_XIP                                                              \
-    (0b11111 << 16) |                                                          \
+#define CTRL0_XIP     \
+    (0b11111 << 16) | \
         (0b11 << 8) // bitmask for setting xip ctrl0 to eeprom read mode and set
                     // it to transfer 32 bits each clock cycle
 
@@ -27,7 +27,7 @@ void boot() {
     // init xpi to be able to copy from flash to sram later
 
     write32((volatile uint_32 *)XIP_CTRL_BASE,
-            0); // disable xip cache by writing 0 into the ctrl register
+            0);                                            // disable xip cache by writing 0 into the ctrl register
     write32((volatile uint_32 *)(XIP_SSI_BASE + 0x08), 0); // disable ssi
     write32((volatile uint_32 *)(XIP_SSI_BASE + 0x14),
             0x4); // set the baud rate for ssi
@@ -37,12 +37,12 @@ void boot() {
 
     // Copy prgoram to sram
     uint_8 *source =
-        (uint_8 *)0x10000100; // Program location in flash memory.
-                              // offset by 256 bits due to bootloader
+        (uint_8 *)0x10000100;                   // Program location in flash memory.
+                                                // offset by 256 bytes due to bootloader
     uint_8 *destination = (uint_8 *)0x20000000; // SRAM location in memory
 
     // copy program from flash to sram
-    for (int i = 0; i < 4095; i++) {
+    for (int i = 0; i < 64 * 1024; i++) {
         *destination = *source;
         destination++;
         source++;
