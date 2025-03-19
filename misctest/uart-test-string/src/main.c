@@ -12,4 +12,9 @@ void main() {
 
     uartSendString("hello world");
     uartSendString("let's try a long string here something something something that is a bit long and would give us something something something yes let's have a bit of a longer string yes yes yes longer string");
+    uartSendInt(5);
+    uartSendInt(-32120);
+    uartSendInt(1239123);
+    uartSendInt(-912382);
+
 }

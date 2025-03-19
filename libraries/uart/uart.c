@@ -61,7 +61,38 @@ void uartSendString(char *str) {
     while (*str) {
         uartSend(*str++);
     }
-} 
+}
+
+void uartSendInt(int num) {
+    char buffer[12]; // enough for a 32-bit integer
+    int i = 0;
+    int isNegative = 0;
+
+    if (num < 0) {
+        isNegative = 1;
+        num = -num; // convert the number to positive for later conversion
+    }
+
+    // Convert the number to string (in reverse order)
+    while (num > 0) {
+        int digit = 0;
+        while (num >= 10) {
+            num -= 10;
+            digit++;
+        }
+        buffer[i++] = num + '0';
+        num = digit;
+    }
+
+    if (isNegative) {
+        buffer[i++] = '-';
+    }
+
+    // Now send the characters in the correct order by reversing the buffer
+    while (i--) {
+        uartSend(buffer[i]);
+    }
+}
 
 char uartReceive() {
     while ((read32((volatile uint_32 *)(UART0_BASE + 0x18)) & (1 << 4)) != 0) {
@@ -69,4 +100,3 @@ char uartReceive() {
 
     return (char)read32((volatile uint_32 *)(UART0_BASE + 0));
 }
-
