@@ -17,17 +17,12 @@ void main() {
 
     uartSendString("hello world");
 
-    uint32_t i = u32Div(10, 2);
-    if (i == 5) {
-        uartSendString("TestComplete");
-    }
+    uartSendU32(5);
 
-    uint32_t j = u32Mod(10, 3);
-    if (j == 1) {
-        uartSendString("TestComplete\n");
+    for (int i = 0; i < 500; i++) {
+        uartSendU32((uint32_t)readTime());
+        uartSend('\n');
     }
-
-    uartSendInt(5);
 
     uartSendString("DONE");
 }

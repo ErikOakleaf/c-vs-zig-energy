@@ -10,11 +10,7 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    // const optimize = b.standardOptimizeOption(.{
-    //     .preferred_optimize_mode = .ReleaseSmall,
-    // });
-
-    const optimize = std.builtin.OptimizeMode.ReleaseSafe;
+    const optimize = std.builtin.OptimizeMode.ReleaseSmall;
 
     const obj = b.addObject(.{
         .name = "main",
@@ -24,11 +20,17 @@ pub fn build(b: *std.Build) void {
     });
 
     const io = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/io/io.zig" } });
+
+    const math = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/math/pico_math.zig" } });
+    math.addImport("io", io);
+
     const uart = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/uart/uart.zig" } });
     uart.addImport("io", io);
+    uart.addImport("pico_math", math);
 
     obj.root_module.addImport("io", io);
     obj.root_module.addImport("uart", uart);
+    obj.root_module.addImport("pico_math", math);
 
     const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
     b.getInstallStep().dependOn(&install_obj.step);

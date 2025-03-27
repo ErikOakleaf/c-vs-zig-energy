@@ -1,4 +1,5 @@
 #include "pico_math.h"
+#include <stdint.h>
 
 uint32_t u32Div(uint32_t dividend, uint32_t divisor) {
     write32((volatile uint32_t *)DIV_UDIVIDEND, dividend);

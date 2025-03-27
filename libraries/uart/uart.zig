@@ -1,4 +1,5 @@
 const io = @import("io");
+const math = @import("pico_math");
 const RESETS_BASE: u32 = 0x4000c000;
 const CLOCK_BASE: u32 = 0x40008000;
 const CLK_PERI_CTRL: u32 = 0x48; // offset for stetting up periphiral clock
@@ -63,74 +64,27 @@ pub fn uartSendString(str: []const u8) void {
     }
 }
 
-pub fn uartSendInt(num: u32) void {
+pub fn uartSendU32(num: u32) void {
     var buffer: [12]u8 = undefined;
     var i: usize = 0;
-    var isNegative: bool = false;
     var newNum: u32 = num;
 
-    if (newNum < 0) {
-        isNegative = true;
-        newNum = -newNum;
-    }
-
     if (newNum == 0) {
-        buffer[i] = '0';
-        i += 1;
+        buffer[i] = 0;
     } else {
         while (newNum > 0) {
-
-            // compute the high32 bits of the multiplication to avoid 64 bit arithmetic
-            var product: u32 = undefined;
-            var overflow: u1 = undefined;
-            product, overflow = @mulWithOverflow(newNum, 0xCCCCCCCD);
-
-            const high_bits = product;
-            const overflow_u32: u32 = @intCast(overflow);
-            const quotient: u32 = (high_bits >> 3) | (overflow_u32 << 29);
-
-            const remainder = newNum - quotient * 10;
-            buffer[i] = @intCast(remainder + '0');
+            const result: math.DivResult = math.u32DivMod(newNum, 10);
+            const remainderU8: u8 = @intCast(result.remainder);
+            buffer[i] = remainderU8 + '0';
             i += 1;
-            newNum = quotient;
+            newNum = result.quotient;
         }
     }
 
-    if (isNegative) {
-        buffer[i] = '-';
-        i += 1;
-    }
-
-    while (i > 0) {
-        i -= 1;
-        uartSend(buffer[i]);
-    }
-}
-
-pub fn uartSendUInt64(num: u64) void {
-    var buffer: [22]u8 = undefined;
-    var i: usize = 0;
-    var newNum: u64 = num;
-
-    if (newNum == 0) {
-        buffer[i] = '0';
-        i += 1;
-    } else {
-        while (newNum > 0) {
-            var digit: u8 = 0;
-            while (newNum >= 10) {
-                newNum -= 10;
-                digit += 1;
-            }
-            buffer[i] = @intCast(newNum + '0');
-            i += 1;
-            newNum = digit;
-        }
-    }
-
-    while (i > 0) {
-        i -= 1;
-        uartSend(buffer[i]);
+    var j = i;
+    while (j > 0) {
+        j -= 1;
+        uartSend(buffer[j]);
     }
 }
 

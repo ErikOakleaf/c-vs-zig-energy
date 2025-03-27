@@ -23,8 +23,7 @@ void enableTransmitReceive();
 void uart0Init();
 void uartSend(char character);
 void uartSendString(char *str);
-void uartSendInt(int num);
-void uartSendUInt64(uint_64 num); 
+void uartSendU32(uint32_t num);
 char uartReceive();
 
 #endif 

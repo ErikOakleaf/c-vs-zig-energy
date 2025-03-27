@@ -13,26 +13,19 @@ export fn main() linksection(".main") void {
     io.write32(@ptrFromInt(0xd0000000 + 0x14), (1 << 25));
 
     uart.uartSendString("hello world");
-    uart.uartSendString("let's try a long string here something something something that is a bit long and would give us something something something yes let's have a bit of a longer string yes yes yes longer string");
-    uart.uartSendInt(5);
+    // uart.uartSendString("let's try a long string here something something something that is a bit long and would give us something something something yes let's have a bit of a longer string yes yes yes longer string");
+    uart.uartSend('\n');
+    uart.uartSendU32(5);
 
-    uart.uartSendInt(12);
-    // uart.uartSendInt(-91);
+    uart.uartSendU32(12);
 
-    uart.uartSendInt(5);
-
-    const multTest: i32 = 5 * 5;
-    uart.uartSendInt(multTest);
-
-    const divTest: i32 = 10 / 5;
-    uart.uartSendInt(divTest);
+    uart.uartSendU32(5);
 
     uart.uartSendString("something something");
     uart.uartSendString("\n");
 
-    // for (0..100) |_| {
-    //     const initTime: u64 = io.readTime();
-    //     uart.uartSendUInt64(io.readTime() - initTime);
-    //     uart.uartSend('\n');
-    // }
+    for (0..100) |_| {
+        uart.uartSendU32(@intCast(io.readTime()));
+        uart.uartSend('\n');
+    }
 }

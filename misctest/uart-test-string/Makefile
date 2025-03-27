@@ -19,7 +19,7 @@ compile:
 	$(ARM)-gcc $(GCC_ARGS) $(INCLUDES) -c $(LIBRARIES)/math/pico_math.c -o out/pico_math.o
 
 link:
-	$(ARM)-gcc $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o out/uart.o out/pico_math.o	-o out/main.elf $(LIBGCC)
+	$(ARM)-gcc $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o out/uart.o out/pico_math.o	-o out/main.elf 
 	$(ARM)-objdump -D out/main.elf > out/main.asm
 
 convert:
