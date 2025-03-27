@@ -56,15 +56,81 @@ pub fn uartSend(character: u8) void {
     // but the data bits in the data memory register
     io.write32(@ptrFromInt(UART0_BASE + 0), @intCast(character));
 }
-// void uartSendString(char *str) {
-//     while (*str) {
-//         uartSend(*str++);
-//     }
-// }
 
 pub fn uartSendString(str: []const u8) void {
     for (str) |c| {
         uartSend(c);
+    }
+}
+
+pub fn uartSendInt(num: u32) void {
+    var buffer: [12]u8 = undefined;
+    var i: usize = 0;
+    var isNegative: bool = false;
+    var newNum: u32 = num;
+
+    if (newNum < 0) {
+        isNegative = true;
+        newNum = -newNum;
+    }
+
+    if (newNum == 0) {
+        buffer[i] = '0';
+        i += 1;
+    } else {
+        while (newNum > 0) {
+
+            // compute the high32 bits of the multiplication to avoid 64 bit arithmetic
+            var product: u32 = undefined;
+            var overflow: u1 = undefined;
+            product, overflow = @mulWithOverflow(newNum, 0xCCCCCCCD);
+
+            const high_bits = product;
+            const overflow_u32: u32 = @intCast(overflow);
+            const quotient: u32 = (high_bits >> 3) | (overflow_u32 << 29);
+
+            const remainder = newNum - quotient * 10;
+            buffer[i] = @intCast(remainder + '0');
+            i += 1;
+            newNum = quotient;
+        }
+    }
+
+    if (isNegative) {
+        buffer[i] = '-';
+        i += 1;
+    }
+
+    while (i > 0) {
+        i -= 1;
+        uartSend(buffer[i]);
+    }
+}
+
+pub fn uartSendUInt64(num: u64) void {
+    var buffer: [22]u8 = undefined;
+    var i: usize = 0;
+    var newNum: u64 = num;
+
+    if (newNum == 0) {
+        buffer[i] = '0';
+        i += 1;
+    } else {
+        while (newNum > 0) {
+            var digit: u8 = 0;
+            while (newNum >= 10) {
+                newNum -= 10;
+                digit += 1;
+            }
+            buffer[i] = @intCast(newNum + '0');
+            i += 1;
+            newNum = digit;
+        }
+    }
+
+    while (i > 0) {
+        i -= 1;
+        uartSend(buffer[i]);
     }
 }
 

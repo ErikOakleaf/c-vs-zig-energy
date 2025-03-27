@@ -2,8 +2,9 @@
 #define UART_H 
 
 #include "io.h"
+#include <stdint.h>
 
-typedef unsigned int uint_32;
+typedef unsigned long long uint_64;
 
 #define RESETS_BASE 0x4000c000
 #define CLOCK_BASE 0x40008000
@@ -23,7 +24,7 @@ void uart0Init();
 void uartSend(char character);
 void uartSendString(char *str);
 void uartSendInt(int num);
-void uartSendUInt64(int num); 
+void uartSendUInt64(uint_64 num); 
 char uartReceive();
 
 #endif 

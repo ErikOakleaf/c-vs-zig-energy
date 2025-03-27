@@ -1,6 +1,7 @@
 ARM = arm-none-eabi
 GCC_ARGS = -Wall -Werror -O2 -ffreestanding -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections
-LINK_ARGS = -nostdlib --gc-sections
+LINK_ARGS = -nostdlib -Wl,--gc-sections 
+LIBGCC = C:\ProgramData\chocolatey\lib\gcc-arm-embedded\tools\gcc-arm-none-eabi-10.3-2021.10\lib\gcc\arm-none-eabi\10.3.1\thumb\v6-m\nofp\libgcc.a
 BOOTROM = ../../ssbootloader/out/bootrom.bin
 LIBRARIES = ../../libraries
 INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart
@@ -17,7 +18,8 @@ compile:
 	$(ARM)-gcc $(GCC_ARGS) $(INCLUDES) -c $(LIBRARIES)/uart/uart.c -o out/uart.o
 
 link:
-	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o out/uart.o -o out/main.elf
+	$(ARM)-gcc $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o out/uart.o \
+	-o out/main.elf $(LIBGCC)
 	$(ARM)-objdump -D out/main.elf > out/main.asm
 
 convert:

@@ -14,7 +14,7 @@ pub fn build(b: *std.Build) void {
     //     .preferred_optimize_mode = .ReleaseSmall,
     // });
 
-    const optimize = std.builtin.OptimizeMode.ReleaseSmall;
+    const optimize = std.builtin.OptimizeMode.ReleaseSafe;
 
     const obj = b.addObject(.{
         .name = "main",
