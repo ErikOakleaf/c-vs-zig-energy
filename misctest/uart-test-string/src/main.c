@@ -1,5 +1,6 @@
 #include "io.h"
 #include "uart.h"
+#include "pico_math.h"
 
 #include <stdint.h>
 
@@ -21,30 +22,16 @@ void main() {
     /*uartSendInt(1239123);*/
     /*uartSendInt(-912382);*/
 
-    uartSendString("\n");
-
-    int i = 2128321;
-
-    if (i % 2128321 == 0) {
-        uartSend('Y');
+    uint32_t i = u32Division(10, 2);
+    if (i == 5) {
+        uartSendString("TestComplete");
     }
 
-    int j = readTime();
-    j += 1;
-
-    if (i % 21231291 != 0) {
-        uartSend('Y');
+    uint32_t j = u32Mod(10, 3);
+    if (j == 1) {
+        uartSendString("TestComplete");
     }
 
-    uartSendString("TESTER");
-    uartSendString("TESTER");
-
-    for (int x = 1; x < 100; x++) {
-        uartSendString("LOOP THROUGH");
-        if (x % 50 == 0) {
-            uartSendString("OKAY");
-        }
-    }
 
     uartSendString("DONE");
 }
