@@ -75,6 +75,8 @@ void uartSendInt(int num) {
         num = -num; // convert the number to positive for later conversion
     }
 
+    uartSend('1');
+
     if (num == 0) {
         buffer[i++] = '0';
     } else {
@@ -85,11 +87,16 @@ void uartSendInt(int num) {
         }
     }
 
+
+    uartSend('2');
+
     if (isNegative) {
         buffer[i++] = '-';
     }
 
-    for (int j = 1; j >= 0; j--) {
+    uartSend('3');
+
+    for (int j = i - 1; j >= 0; j--) {
         uartSend(buffer[j]);
     }
 }

@@ -1,6 +1,6 @@
 #include "io.h"
-#include "uart.h"
 #include "pico_math.h"
+#include "uart.h"
 
 #include <stdint.h>
 
@@ -16,11 +16,6 @@ void main() {
     write32((volatile uint32_t *)(0xd0000000 + 0x014), (1 << 25));
 
     uartSendString("hello world");
-    uartSendString("let's try a long string here something something something that is a bit long and would give us something something something yes let's have a bit of a longer string yes yes yes longer string");
-    /*uartSendInt(5);*/
-    /*uartSendInt(-32120);*/
-    /*uartSendInt(1239123);*/
-    /*uartSendInt(-912382);*/
 
     uint32_t i = u32Div(10, 2);
     if (i == 5) {
@@ -32,6 +27,8 @@ void main() {
         uartSendString("TestComplete");
     }
 
+    uartSendInt(5);
+    uartSendInt(1239123);
 
     uartSendString("DONE");
 }

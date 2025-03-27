@@ -28,7 +28,7 @@ div_result_t u32DivMod(uint32_t dividend, uint32_t divisor) {
     }
 
     div_result_t result;
-    result.quotient = read32((volatile uint32_t *)DIV_REMAINDER);
+    result.quotient = read32((volatile uint32_t *)DIV_QUOTIENT);
     result.remainder = read32((volatile uint32_t *)DIV_REMAINDER);
     return result;
 }
