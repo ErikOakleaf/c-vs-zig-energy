@@ -22,7 +22,7 @@ void main() {
     /*uartSendInt(1239123);*/
     /*uartSendInt(-912382);*/
 
-    uint32_t i = u32Division(10, 2);
+    uint32_t i = u32Div(10, 2);
     if (i == 5) {
         uartSendString("TestComplete");
     }

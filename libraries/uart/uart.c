@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "pico_math.h"
 #include <stdint.h>
 
 void enablePeriClock() {
@@ -74,37 +75,21 @@ void uartSendInt(int num) {
         num = -num; // convert the number to positive for later conversion
     }
 
-    uartSendString("before while");
-
-    // Handle zero explicitly
     if (num == 0) {
         buffer[i++] = '0';
     } else {
-        // Convert the number to string (in reverse order)
         while (num > 0) {
-            buffer[i++] = (num % 10) + '0'; // Get the last digit using modulo
-            num /= 10;                      // Remove the last digit using integer division
+            div_result_t result = u32DivMod(num, 10);
+            buffer[i++] = result.remainder + '0';
+            num = result.quotient;
         }
     }
-
-    uartSendString("after while");
 
     if (isNegative) {
         buffer[i++] = '-';
     }
 
-    // Now send the characters in the correct order by reversing the buffer
-    int start = 0;
-    int end = i - 1;
-    while (start < end) {
-        char temp = buffer[start];
-        buffer[start] = buffer[end];
-        buffer[end] = temp;
-        start++;
-        end--;
-    }
-
-    for (int j = 0; j < i; j++) {
+    for (int j = 1; j >= 0; j--) {
         uartSend(buffer[j]);
     }
 }

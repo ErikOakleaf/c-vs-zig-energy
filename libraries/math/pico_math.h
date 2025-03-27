@@ -12,8 +12,13 @@
 #define DIV_REMAINDER (SIO_BASE + 0x74)
 #define DIV_CSR (SIO_BASE + 0x78)
 
+typedef struct {
+    uint32_t quotient;
+    uint32_t remainder;
+} div_result_t;
 
-uint32_t u32Division(uint32_t dividend, uint32_t divisor); 
+uint32_t u32Div(uint32_t dividend, uint32_t divisor); 
 uint32_t u32Mod(uint32_t dividend, uint32_t divisor); 
+div_result_t u32DivMod(uint32_t dividend, uint32_t divisor); 
 
 #endif 
