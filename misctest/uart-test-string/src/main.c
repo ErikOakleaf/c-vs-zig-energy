@@ -24,11 +24,10 @@ void main() {
 
     uint32_t j = u32Mod(10, 3);
     if (j == 1) {
-        uartSendString("TestComplete");
+        uartSendString("TestComplete\n");
     }
 
     uartSendInt(5);
-    uartSendInt(1239123);
 
     uartSendString("DONE");
 }
