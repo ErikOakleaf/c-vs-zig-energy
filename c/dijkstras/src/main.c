@@ -41,7 +41,7 @@ void heapifyDown(Vertex minHeap[], int heapLookup[], int size, int i) {
     }
 }
 
-void heapifyUp(Vertex minHeap[], int heapLookup[], int size, int i) {
+void heapifyUp(Vertex minHeap[], int heapLookup[], int i) {
     while (i > 0 && minHeap[(i - 1) / 2].distance > minHeap[i].distance) {
         int parent = (i - 1) / 2;
 
@@ -68,15 +68,15 @@ void insertNode(Vertex minHeap[], int heapLookup[], int *size, Vertex newVertex)
     minHeap[*size] = newVertex;
     heapLookup[newVertex.index] = *size;
     (*size)++;
-    heapifyUp(minHeap, heapLookup, *size, *size - 1);
+    heapifyUp(minHeap, heapLookup, *size - 1);
 }
 
-void updateNode(Vertex minHeap[], int heapLookup[], int size, int vertex, int newDistance) {
+void updateNode(Vertex minHeap[], int heapLookup[], int vertex, int newDistance) {
     int pos = heapLookup[vertex];
 
     minHeap[pos].distance = newDistance;
 
-    heapifyUp(minHeap, heapLookup, size, pos);
+    heapifyUp(minHeap, heapLookup, pos);
 }
 
 void initEmptyArrayInt(int array[], int size) {
@@ -127,7 +127,7 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
                     previous[v] = current_index;
 
                     if (heapLookup[v] != -1) {
-                        updateNode(minHeap, heapLookup, heap_size, v, alt);
+                        updateNode(minHeap, heapLookup, v, alt);
                     } else {
                         insertNode(minHeap, heapLookup, &heap_size, (Vertex){alt, v});
                     }
@@ -138,16 +138,19 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
 
     // for debugging here show the path
 
+    /*uart0Init();*/
+    /**/
     /*int final = destination;*/
     /**/
     /*uartSendU32(final + 1);*/
     /*uartSendString(" -> ");*/
     /**/
     /*while (final != -1) {*/
-    /*    uartSendInt(previous[final] + 1);*/
+    /*    uartSendU32(previous[final] + 1);*/
     /*    uartSendString(" -> ");*/
     /*    final = previous[final];*/
     /*}*/
+    /*uartSend('\n');*/
 }
 
 void main(void) __attribute__((section(".main")));
