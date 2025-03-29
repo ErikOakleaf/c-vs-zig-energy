@@ -99,9 +99,6 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
     initEmptyArrayInt0(visited, size);
     distances[source] = 0;
 
-    uartSendInt(destination);
-    uartSend('\n');
-
     // add the source node to the priority queue
     int heap_size = 0;
     insertNode(minHeap, heapLookup, &heap_size, (Vertex){0, source});
@@ -139,21 +136,22 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
         }
     }
 
-    int final = destination;
+    // for debugging here show the path
 
-    uartSendInt(final + 1);
-    uartSendString(" -> ");
-
-    while (final != -1) {
-        uartSendInt(previous[final] + 1);
-        uartSendString(" -> ");
-        final = previous[final];
-    }
+    /*int final = destination;*/
+    /**/
+    /*uartSendU32(final + 1);*/
+    /*uartSendString(" -> ");*/
+    /**/
+    /*while (final != -1) {*/
+    /*    uartSendInt(previous[final] + 1);*/
+    /*    uartSendString(" -> ");*/
+    /*    final = previous[final];*/
+    /*}*/
 }
 
 void main(void) __attribute__((section(".main")));
 void main() {
-    uart0Init();
     timerInit();
 
     int distances[GRAPH_SIZE];
@@ -162,24 +160,25 @@ void main() {
     int heapLookup[GRAPH_SIZE];
     int visited[GRAPH_SIZE];
 
-    for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
-        uint_64 initTime = readTime();
-        dijkstras((int *)dijkstrasTestDataArray[i].graph,
-                  50,
-                  dijkstrasTestDataArray[i].source,
-                  dijkstrasTestDataArray[i].destination,
-                  distances,
-                  previous,
-                  minHeap,
-                  heapLookup,
-                  visited);
-        uartSend('\n');
-        uartSendString("graph: ");
-        uartSendInt(i);
-        uartSendString("\ntime to execute: ");
-        uartSendUInt64(readTime() - initTime);
-        uartSend('\n');
+    int amountTests = 500;
+
+    for (int i = 0; i < amountTests; i++) {
+        for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
+            dijkstras((int *)dijkstrasTestDataArray[i].graph,
+                      50,
+                      dijkstrasTestDataArray[i].source,
+                      dijkstrasTestDataArray[i].destination,
+                      distances,
+                      previous,
+                      minHeap,
+                      heapLookup,
+                      visited);
+        }
     }
 
-    uartSendString("End of line ");
+    uart0Init();
+    uartSendU32(amountTests);
+    uartSendString(" tests done, took: ");
+    uartSendU32(readTime());
+    uartSendString(" microseconds");
 }
