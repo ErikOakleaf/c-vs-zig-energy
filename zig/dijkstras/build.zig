@@ -10,7 +10,7 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const optimize = std.builtin.OptimizeMode.ReleaseSmall;
+    const optimize = std.builtin.OptimizeMode.ReleaseFast;
 
     const obj = b.addObject(.{
         .name = "main",
@@ -34,6 +34,9 @@ pub fn build(b: *std.Build) void {
     obj.root_module.addImport("uart", uart);
     obj.root_module.addImport("pico_math", math);
     obj.root_module.addImport("test_data", test_data);
+
+    obj.no_builtin = true;
+    obj.root_module.unwind_tables = .none;
 
     const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
     b.getInstallStep().dependOn(&install_obj.step);

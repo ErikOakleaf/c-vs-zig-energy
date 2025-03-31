@@ -1,3 +1,4 @@
+const std = @import("std");
 const io = @import("io");
 const uart = @import("uart");
 const testData = @import("test_data");
@@ -87,7 +88,7 @@ fn initEmptyArrayInt0(array: []i32) void {
     }
 }
 
-fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usize, destination: usize, distances: []i32, previous: []i32, minHeap: []Vertex, heapLookup: []i32, visited: []i32) void {
+fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usize, distances: []i32, previous: []i32, minHeap: []Vertex, heapLookup: []i32, visited: []i32) void {
     // initalize the previous and distance array
     initEmptyArrayInt(distances);
     initEmptyArrayInt(previous);
@@ -131,25 +132,24 @@ fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usi
         }
     }
 
-    // for debugging here show the path
-    uart.uart0Init();
-    var final = destination;
-    uart.uartSendU32(final + 1);
-    uart.uartSendString(" -> ");
-
-    while (final != source and previous[final] != -1) {
-        final = @intCast(previous[final]);
-        uart.uartSendU32(final + 1);
-        if (final != source) {
-            uart.uartSendString(" -> ");
-        }
-    }
-
-    uart.uartSend('\n');
+    // // for debugging here show the path
+    // uart.uart0Init();
+    // var final = destination;
+    // uart.uartSendU32(final + 1);
+    // uart.uartSendString(" -> ");
+    //
+    // while (final != source and previous[final] != -1) {
+    //     final = @intCast(previous[final]);
+    //     uart.uartSendU32(final + 1);
+    //     if (final != source) {
+    //         uart.uartSendString(" -> ");
+    //     }
+    // }
+    //
+    // uart.uartSend('\n');
 }
 
 export fn main() linksection(".main") void {
-    uart.uart0Init();
     io.timerInit();
 
     var distances: [GRAPH_SIZE]i32 = undefined;
@@ -158,9 +158,17 @@ export fn main() linksection(".main") void {
     var heapLookup: [GRAPH_SIZE]i32 = undefined;
     var visited: [GRAPH_SIZE]i32 = undefined;
 
-    for (&testData.dijkstrasTestDataArray) |*testGraph| {
-        dijkstras(&testGraph.graph, testGraph.size, testGraph.source, testGraph.destination, &distances, &previous, &minHeap, &heapLookup, &visited);
+    const ammountTest: u32 = 500;
+
+    for (0..ammountTest) |_| {
+        for (&testData.dijkstrasTestDataArray) |*testGraph| {
+            dijkstras(&testGraph.graph, testGraph.size, testGraph.source, &distances, &previous, &minHeap, &heapLookup, &visited);
+        }
     }
 
-    uart.uartSendString("Everything done");
+    uart.uart0Init();
+    uart.uartSendU32(ammountTest);
+    uart.uartSendString(" tests done, took: ");
+    uart.uartSendU32(@intCast(io.readTime()));
+    uart.uartSendString(" microseconds");
 }
