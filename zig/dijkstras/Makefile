@@ -15,7 +15,7 @@ compile:
 	zig build --verbose
 
 link:
-	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) zig-out/main.o -o out/main.elf
+	$(ARM)-gcc $(LINK_ARGS) -mcpu=cortex-m0plus -mthumb -T $(LINKER) zig-out/main.o -o out/main.elf -lgcc
 	$(ARM)-objdump -D out/main.elf > out/main.asm
 
 convert:
