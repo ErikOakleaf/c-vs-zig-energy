@@ -1,4 +1,3 @@
-const std = @import("std");
 const io = @import("io");
 const uart = @import("uart");
 const testData = @import("test_data");
@@ -132,6 +131,11 @@ fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usi
         }
     }
 
+    // for debugging making sure that dijkstras is done
+
+    // var debugVal: i32 = calculateChecksum(previous);
+    // debugVal += 1;
+
     // // for debugging here show the path
     // uart.uart0Init();
     // var final = destination;
@@ -148,6 +152,16 @@ fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usi
     //
     // uart.uartSend('\n');
 }
+
+// debug funcion
+
+// fn calculateChecksum(array: []volatile i32) i32 {
+//     var checksum: i32 = 0;
+//     for (array) |value| {
+//         checksum = (checksum * 31 + value) & 0x7FFFFFFF;
+//     }
+//     return checksum;
+// }
 
 export fn main() linksection(".main") void {
     io.timerInit();

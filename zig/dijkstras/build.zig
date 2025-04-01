@@ -35,7 +35,6 @@ pub fn build(b: *std.Build) void {
     obj.root_module.addImport("pico_math", math);
     obj.root_module.addImport("test_data", test_data);
 
-    obj.no_builtin = true;
     obj.root_module.unwind_tables = .none;
 
     const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
