@@ -1,5 +1,5 @@
 ARM = arm-none-eabi
-GCC_ARGS = -Wall -Werror -O2 -ffreestanding -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections
+GCC_ARGS = -Wall -Werror -O3 -ffreestanding -mcpu=cortex-m0plus -mthumb -march=armv6-m -ffunction-sections -fdata-sections
 LINK_ARGS = -nostdlib --gc-sections
 BOOTROM = ../../ssbootloader/out/bootrom.bin
 LIBRARIES = ../../libraries
