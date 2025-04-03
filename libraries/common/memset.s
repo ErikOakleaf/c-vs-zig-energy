@@ -16,6 +16,7 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+// implementation changed to swap parameters position
 
 
 	.syntax unified
@@ -46,6 +47,10 @@ __aeabi_memclr:
 	.thumb_func
         .global __aeabi_memset
 __aeabi_memset:
+    @ Swap the fill value and length to match C's calling order.
+    mov    r3, r1   @ Save original r1 (fill value from C call).
+    mov    r1, r2   @ Move n (which was in r2) into r1.
+    mov    r2, r3   @ Restore fill value into r2.
 
 	@ check if length=0
 	cmp	r1, #0

@@ -91,7 +91,7 @@ void initEmptyArrayInt0(int array[], int size) {
     }
 }
 
-void dijkstras(int *graph, int size, int source, int destination, int distances[], int previous[], Vertex minHeap[], int heapLookup[], int visited[]) {
+void dijkstras(int *graph, int size, int source, int distances[], int previous[], Vertex minHeap[], int heapLookup[], int visited[]) {
     // initialize the previous and distance array
     initEmptyArrayInt(previous, size);
     initEmptyArrayInt(distances, size);
@@ -135,27 +135,28 @@ void dijkstras(int *graph, int size, int source, int destination, int distances[
             }
         }
     }
+}
 
+void printPath(int previous[], int destination) {
     // for debugging here show the path
 
-    /*uart0Init();*/
-    /**/
-    /*int final = destination;*/
-    /**/
-    /*uartSendU32(final + 1);*/
-    /*uartSendString(" -> ");*/
-    /**/
-    /*while (final != -1) {*/
-    /*    uartSendU32(previous[final] + 1);*/
-    /*    uartSendString(" -> ");*/
-    /*    final = previous[final];*/
-    /*}*/
-    /*uartSend('\n');*/
+    int final = destination;
+
+    uartSendU32(final + 1);
+    uartSendString(" -> ");
+
+    while (final != -1) {
+        uartSendU32(previous[final] + 1);
+        uartSendString(" -> ");
+        final = previous[final];
+    }
+    uartSend('\n');
 }
 
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
+    uart0Init();
 
     int distances[GRAPH_SIZE];
     int previous[GRAPH_SIZE];
@@ -170,12 +171,12 @@ void main() {
             dijkstras((int *)dijkstrasTestDataArray[i].graph,
                       50,
                       dijkstrasTestDataArray[i].source,
-                      dijkstrasTestDataArray[i].destination,
                       distances,
                       previous,
                       minHeap,
                       heapLookup,
                       visited);
+            printPath(previous, dijkstrasTestDataArray[i].destination);
         }
     }
 

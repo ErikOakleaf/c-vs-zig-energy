@@ -130,41 +130,28 @@ fn dijkstras(graph: *const [GRAPH_SIZE][GRAPH_SIZE]i32, size: usize, source: usi
             }
         }
     }
-
-    // for debugging making sure that dijkstras is done
-
-    // var debugVal: i32 = calculateChecksum(previous);
-    // debugVal += 1;
-
-    // // for debugging here show the path
-    // uart.uart0Init();
-    // var final = destination;
-    // uart.uartSendU32(final + 1);
-    // uart.uartSendString(" -> ");
-    //
-    // while (final != source and previous[final] != -1) {
-    //     final = @intCast(previous[final]);
-    //     uart.uartSendU32(final + 1);
-    //     if (final != source) {
-    //         uart.uartSendString(" -> ");
-    //     }
-    // }
-    //
-    // uart.uartSend('\n');
 }
 
-// debug funcion
+fn printPath(previousArray: []i32, destination: usize) void {
+    // for debugging here show the path
 
-// fn calculateChecksum(array: []volatile i32) i32 {
-//     var checksum: i32 = 0;
-//     for (array) |value| {
-//         checksum = (checksum * 31 + value) & 0x7FFFFFFF;
-//     }
-//     return checksum;
-// }
+    var final: i32 = @intCast(destination);
+    uart.uartSendString("\r\n");
+    uart.uartSendU32(@intCast(final + 1));
+    uart.uartSendString(" -> ");
+
+    while (final != -1) {
+        uart.uartSendU32(@intCast(previousArray[@intCast(final)] + 1));
+        uart.uartSendString(" -> ");
+        final = previousArray[@intCast(final)];
+    }
+
+    uart.uartSend('\n');
+}
 
 export fn main() linksection(".main") void {
     io.timerInit();
+    uart.uart0Init();
 
     var distances: [GRAPH_SIZE]i32 = undefined;
     var previous: [GRAPH_SIZE]i32 = undefined;
@@ -172,11 +159,13 @@ export fn main() linksection(".main") void {
     var heapLookup: [GRAPH_SIZE]i32 = undefined;
     var visited: [GRAPH_SIZE]i32 = undefined;
 
-    const ammountTest: u32 = 500;
+    const ammountTest: u32 = 1;
 
     for (0..ammountTest) |_| {
         for (&testData.dijkstrasTestDataArray) |*testGraph| {
             dijkstras(&testGraph.graph, testGraph.size, testGraph.source, &distances, &previous, &minHeap, &heapLookup, &visited);
+
+            printPath(&previous, testGraph.destination);
         }
     }
 
