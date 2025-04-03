@@ -159,13 +159,13 @@ export fn main() linksection(".main") void {
     var heapLookup: [GRAPH_SIZE]i32 = undefined;
     var visited: [GRAPH_SIZE]i32 = undefined;
 
-    const ammountTest: u32 = 1;
+    const ammountTest: u32 = 500;
 
     for (0..ammountTest) |_| {
         for (&testData.dijkstrasTestDataArray) |*testGraph| {
             dijkstras(&testGraph.graph, testGraph.size, testGraph.source, &distances, &previous, &minHeap, &heapLookup, &visited);
 
-            printPath(&previous, testGraph.destination);
+            // printPath(&previous, testGraph.destination);
         }
     }
 

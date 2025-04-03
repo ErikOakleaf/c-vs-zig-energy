@@ -6,12 +6,12 @@ OVERHEAD = 96    # 3 ints (size, source, destination), assumed 4 bytes each
 STRUCT_SIZE = GRAPH_SIZE * GRAPH_SIZE + OVERHEAD  # size in bytes per GraphData instance
 TARGET_TOTAL_BYTES = 200 * 1024  # target of ~200 KB
 # num_graphs = TARGET_TOTAL_BYTES // STRUCT_SIZE
-num_graphs = 6 
+num_graphs = 5 
 if num_graphs < 1:
     num_graphs = 1  # ensure we generate at least one graph
 
 # For extra edges: adjust probability (0.1 yields sparse extra edges)
-EDGE_PROBABILITY = 0.1
+EDGE_PROBABILITY = 0.8
 
 print(f"Generating {num_graphs} graphs of {GRAPH_SIZE} nodes each (~{num_graphs * STRUCT_SIZE} bytes total).")
 

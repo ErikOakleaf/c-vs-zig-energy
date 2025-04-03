@@ -140,6 +140,8 @@ void dijkstras(int *graph, int size, int source, int distances[], int previous[]
 void printPath(int previous[], int destination) {
     // for debugging here show the path
 
+    uartSendString("\r\n");
+
     int final = destination;
 
     uartSendU32(final + 1);
@@ -150,7 +152,7 @@ void printPath(int previous[], int destination) {
         uartSendString(" -> ");
         final = previous[final];
     }
-    uartSend('\n');
+    uartSendString("\r\n");
 }
 
 void main(void) __attribute__((section(".main")));
@@ -176,7 +178,7 @@ void main() {
                       minHeap,
                       heapLookup,
                       visited);
-            printPath(previous, dijkstrasTestDataArray[i].destination);
+            /*printPath(previous, dijkstrasTestDataArray[i].destination);*/
         }
     }
 
