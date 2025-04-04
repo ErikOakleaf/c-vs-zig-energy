@@ -12,8 +12,8 @@ pub fn build(b: *std.Build) void {
 
     const optimize = std.builtin.OptimizeMode.ReleaseSmall;
 
-    const obj = b.addObject(.{
-        .name = "main",
+    const exe = b.addExecutable(.{
+        .name = "main.elf",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
@@ -21,8 +21,18 @@ pub fn build(b: *std.Build) void {
 
     const io = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/io/io.zig" } });
 
-    obj.root_module.addImport("io", io);
+    exe.root_module.addImport("io", io);
+    exe.root_module.unwind_tables = .none;
+    exe.linker_script = .{ .cwd_relative = "../../libraries/common/linker.ld" };
 
-    const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
-    b.getInstallStep().dependOn(&install_obj.step);
+    const dissasmble_cmd = b.addSystemCommand(&[_][]const u8{
+        "arm-none-eabi-objdump",
+        "-D",
+    });
+    dissasmble_cmd.addFileArg(exe.getEmittedBin());
+    const dissasmble_file = dissasmble_cmd.captureStdOut();
+    const install_asm = b.addInstallFile(dissasmble_file, "main.asm");
+
+    b.installArtifact(exe);
+    b.getInstallStep().dependOn(&install_asm.step);
 }
