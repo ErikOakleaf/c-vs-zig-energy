@@ -1,10 +1,10 @@
 ARM = arm-none-eabi
 GCC_ARGS = -Wall -Werror -O3 -ffreestanding -mcpu=cortex-m0plus -mthumb -march=armv6-m -ffunction-sections -fdata-sections
-LINK_ARGS = -nostdlib --gc-sections
+LINK_ARGS = -nostdlib -Wl,--gc-sections
 BOOTROM = ../../ssbootloader/out/bootrom.bin
 LIBRARIES = ../../libraries
 TEST_DATA = ../../test-data
-INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart -I$(LIBRARIES)/math -I$(TEST_DATA)/int-matrix-multiplication
+INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart -I$(LIBRARIES)/math -I$(TEST_DATA)/float-matrix-multiplication
 LINKER = $(LIBRARIES)/common/linker.ld
 
 default: setup compile link convert
@@ -19,7 +19,7 @@ compile:
 	$(ARM)-gcc $(GCC_ARGS) $(INCLUDES) -c $(LIBRARIES)/math/pico_math.c -o out/math.o
 
 link:
-	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o out/uart.o out/math.o -o out/main.elf
+	$(ARM)-gcc $(LINK_ARGS) -T $(LINKER) -mcpu=cortex-m0plus -mthumb -march=armv6-m out/main.o out/io.o out/uart.o out/math.o -o out/main.elf -lgcc
 	$(ARM)-objdump -D out/main.elf > out/main.asm
 
 convert:
