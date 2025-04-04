@@ -13,10 +13,9 @@ setup:
 
 compile:
 	zig build --verbose
-	arm-none-eabi-as -mcpu=cortex-m0plus -mthumb $(LIBRARIES)/common/memset.s -o out/memset.o
 
 link:
-	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) zig-out/main.o out/memset.o -o out/main.elf 
+	$(ARM)-ld $(LINK_ARGS) -T $(LINKER) zig-out/main.o -o out/main.elf 
 	$(ARM)-objdump -D out/main.elf > out/main.asm
 
 convert:
