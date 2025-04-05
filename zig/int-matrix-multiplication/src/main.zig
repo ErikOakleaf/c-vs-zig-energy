@@ -27,21 +27,6 @@ fn testChecksum(result: *const [5][5]i32, checksum: i32) void {
     }
 }
 
-// void testChecksum(int result[5][5], int checksum) {
-//     int compare = 0;
-//     for (int i = 0; i < 5; i++) {
-//         for (int j = 0; j < 5; j++) {
-//             compare += result[j][i];
-//         }
-//     }
-//
-//     if (!(compare == checksum)) {
-//         uart0Init();
-//         uartSendString("checksum error");
-//         uartSendString("\r\n");
-//     }
-// }
-
 export fn main() linksection(".main") void {
     io.timerInit();
 

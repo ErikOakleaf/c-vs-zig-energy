@@ -23,7 +23,7 @@ pub fn build(b: *std.Build) void {
 
     exe.root_module.addImport("io", io);
     exe.root_module.unwind_tables = .none;
-    exe.linker_script = .{ .cwd_relative = "../../libraries/common/linker.ld" };
+    exe.linker_script = .{ .cwd_relative = "../../libraries/common/linker.ls" };
 
     const dissasmble_cmd = b.addSystemCommand(&[_][]const u8{
         "arm-none-eabi-objdump",

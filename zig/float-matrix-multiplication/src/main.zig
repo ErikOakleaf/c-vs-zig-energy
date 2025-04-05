@@ -22,23 +22,9 @@ fn generateChecksum(result: *const [5][5]f64, checksum: *f64) void {
     }
 }
 
-// void testChecksum(int result[5][5], int checksum) {
-//     int compare = 0;
-//     for (int i = 0; i < 5; i++) {
-//         for (int j = 0; j < 5; j++) {
-//             compare += result[j][i];
-//         }
-//     }
-//
-//     if (!(compare == checksum)) {
-//         uart0Init();
-//         uartSendString("checksum error");
-//         uartSendString("\r\n");
-//     }
-// }
-
 export fn main() linksection(".main") void {
     io.timerInit();
+    uart.uart0Init();
 
     const amountTest: usize = 10;
 
@@ -46,7 +32,8 @@ export fn main() linksection(".main") void {
     var checksum: f64 = undefined;
 
     for (0..amountTest) |_| {
-        for (0..test_data.NUM_TEST_MATRICES) |j| {
+        // for (0..test_data.NUM_TEST_MATRICES) |j| {
+        for (0..1) |j| {
             matirxMultiply5x5(&test_data.test_matrices[j].matrix1, &test_data.test_matrices[j].matrix2, &result);
             generateChecksum(&result, &checksum);
             uart.uartSendU32(@intFromFloat(checksum));

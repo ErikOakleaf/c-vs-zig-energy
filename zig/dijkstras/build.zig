@@ -12,11 +12,20 @@ pub fn build(b: *std.Build) void {
 
     const optimize = std.builtin.OptimizeMode.ReleaseFast;
 
-    const obj = b.addObject(.{
-        .name = "main",
+    const exe = b.addExecutable(.{
+        .name = "main.elf",
         .root_source_file = b.path("src/main.zig"),
         .target = target,
         .optimize = optimize,
+    });
+
+    const compile_memset_cmd = b.addSystemCommand(&[_][]const u8{
+        "arm-none-eabi-as",
+        "-mcpu=cortex-m0plus",
+        "-mthumb",
+        "../../libraries/common/memset.s",
+        "-o",
+        b.pathFromRoot("out/memset.o"),
     });
 
     const io = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/io/io.zig" } });
@@ -30,15 +39,25 @@ pub fn build(b: *std.Build) void {
 
     const test_data = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../test-data/dijkstras/test_data.zig" } });
 
-    obj.root_module.addImport("io", io);
-    obj.root_module.addImport("uart", uart);
-    obj.root_module.addImport("pico_math", math);
-    obj.root_module.addImport("test_data", test_data);
+    exe.root_module.addImport("io", io);
+    exe.root_module.addImport("uart", uart);
+    exe.root_module.addImport("pico_math", math);
+    exe.root_module.addImport("test_data", test_data);
+    exe.addObjectFile(b.path("out/memset.o"));
 
-    obj.root_module.unwind_tables = .none;
+    exe.linker_script = .{ .cwd_relative = "../../libraries/common/linker.ls" };
 
-    const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
-    b.getInstallStep().dependOn(&install_obj.step);
-    const install_asm = b.addInstallFile(obj.getEmittedAsm(), "main.asm");
+    const dissasmble_cmd = b.addSystemCommand(&[_][]const u8{
+        "arm-none-eabi-objdump",
+        "-D",
+    });
+    dissasmble_cmd.addFileArg(exe.getEmittedBin());
+    const dissasmble_file = dissasmble_cmd.captureStdOut();
+    const install_asm = b.addInstallFile(dissasmble_file, "main.asm");
+
+    exe.root_module.unwind_tables = .none;
+    exe.step.dependOn(&compile_memset_cmd.step);
+
+    b.installArtifact(exe);
     b.getInstallStep().dependOn(&install_asm.step);
 }

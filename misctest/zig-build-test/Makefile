@@ -1,10 +1,5 @@
 ARM = arm-none-eabi
-GCC_ARGS = -Wall -Werror -O2 -ffreestanding -mcpu=cortex-m0plus -mthumb
-LINK_ARGS = -nostdlib
 BOOTROM = ../../ssbootloader/out/bootrom.bin
-LIBRARIES = ../../libraries
-INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart
-LINKER = $(LIBRARIES)/common/linker.ld
 
 default: setup compile convert
 
