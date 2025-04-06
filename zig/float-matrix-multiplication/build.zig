@@ -10,7 +10,7 @@ pub fn build(b: *std.Build) void {
         },
     });
 
-    const optimize = std.builtin.OptimizeMode.ReleaseFast;
+    const optimize = std.builtin.OptimizeMode.ReleaseSmall;
 
     const exe = b.addExecutable(.{
         .name = "main.elf",

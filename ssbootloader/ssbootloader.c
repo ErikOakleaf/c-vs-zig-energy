@@ -42,7 +42,7 @@ void boot() {
     uint_8 *destination = (uint_8 *)0x20000000; // SRAM location in memory
 
     // copy program from flash to sram
-    for (int i = 0; i < 64 * 1024; i++) {
+    for (int i = 0; i < 256 * 1024; i++) {
         *destination = *source;
         destination++;
         source++;
