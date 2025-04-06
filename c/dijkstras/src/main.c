@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define GRAPH_SIZE 50
 
 #include "test_data.h"
@@ -158,6 +159,9 @@ void printPath(int previous[], int destination) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
+
+    uint64_t initTime = readTime(); 
+
     uart0Init();
 
     int distances[GRAPH_SIZE];
@@ -185,6 +189,6 @@ void main() {
     uart0Init();
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime());
+    uartSendU32((uint32_t)(readTime() - initTime));
     uartSendString(" microseconds");
 }

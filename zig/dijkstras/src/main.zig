@@ -151,7 +151,7 @@ fn printPath(previousArray: []i32, destination: usize) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    uart.uart0Init();
+    const initTime: u64 = io.readTime();
 
     var distances: [GRAPH_SIZE]i32 = undefined;
     var previous: [GRAPH_SIZE]i32 = undefined;
@@ -172,6 +172,6 @@ export fn main() linksection(".main") void {
     uart.uart0Init();
     uart.uartSendU32(ammountTest);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime()));
+    uart.uartSendU32(@intCast(io.readTime() - initTime));
     uart.uartSendString(" microseconds");
 }
