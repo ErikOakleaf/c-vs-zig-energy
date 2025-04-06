@@ -29,6 +29,7 @@ fn testChecksum(result: *const [5][5]i32, checksum: i32) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
+    const initTime: u64 = io.readTime();
 
     const amountTest: usize = 500;
 
@@ -44,6 +45,6 @@ export fn main() linksection(".main") void {
     uart.uart0Init();
     uart.uartSendU32(amountTest);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime()));
+    uart.uartSendU32(@intCast(io.readTime() - initTime));
     uart.uartSendString(" microseconds");
 }

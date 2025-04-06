@@ -24,9 +24,9 @@ fn generateChecksum(result: *const [5][5]f64, checksum: *f64) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    uart.uart0Init();
+    const initTime: u64 = io.readTime();
 
-    const amountTest: usize = 10;
+    const amountTest: usize = 500;
 
     var result: [5][5]f64 = undefined;
     var checksum: f64 = undefined;
@@ -43,6 +43,6 @@ export fn main() linksection(".main") void {
     uart.uart0Init();
     uart.uartSendU32(amountTest);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime()));
+    uart.uartSendU32(@intCast(io.readTime() - initTime));
     uart.uartSendString(" microseconds");
 }

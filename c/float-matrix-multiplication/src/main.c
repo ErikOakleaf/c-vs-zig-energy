@@ -48,6 +48,7 @@ void printResult(double result[5][5]) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
+    uint64_t initTime = readTime();
 
     int amountTests = 10;
     double checksum;
@@ -64,6 +65,6 @@ void main() {
     uart0Init();
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime());
+    uartSendU32(readTime() - initTime);
     uartSendString(" microseconds");
 }

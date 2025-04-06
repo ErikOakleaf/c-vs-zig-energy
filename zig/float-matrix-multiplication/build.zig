@@ -40,11 +40,13 @@ pub fn build(b: *std.Build) void {
     const dissasmble_cmd = b.addSystemCommand(&[_][]const u8{
         "arm-none-eabi-objdump",
         "-D",
+        "-j",
+        ".text",
     });
     dissasmble_cmd.addFileArg(exe.getEmittedBin());
-    // const dissasmble_file = dissasmble_cmd.captureStdOut();
-    // const install_asm = b.addInstallFile(dissasmble_file, "main.asm");
+    const dissasmble_file = dissasmble_cmd.captureStdOut();
+    const install_asm = b.addInstallFile(dissasmble_file, "main.asm");
 
     b.installArtifact(exe);
-    // b.getInstallStep().dependOn(&install_asm.step);
+    b.getInstallStep().dependOn(&install_asm.step);
 }
