@@ -29,6 +29,7 @@ fn SolveCubic(a: f64, b: f64, c: f64, d: f64, solutions: *i32, x: []f64) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
+    const initTime: u64 = io.readTime();
 
     const a1: f64 = 1.0;
     const b1: f64 = -10.5;
@@ -54,7 +55,7 @@ export fn main() linksection(".main") void {
 
     var output: [48]f64 = undefined;
 
-    const amountTests: u32 = 1;
+    const amountTests: u32 = 500;
 
     for (0..amountTests) |_| {
         // solve some cubic functions
@@ -83,6 +84,6 @@ export fn main() linksection(".main") void {
     uart.uart0Init();
     uart.uartSendU32(amountTests);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime()));
+    uart.uartSendU32(@intCast(io.readTime() - initTime));
     uart.uartSendString(" microseconds");
 }
