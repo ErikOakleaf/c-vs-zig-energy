@@ -1,4 +1,5 @@
 #include "io.h"
+#include <stdint.h>
 
 void write32(volatile uint32_t *address, uint32_t value) {
     *address = value;
@@ -26,4 +27,8 @@ uint_64 readTime() {
     } while (high != read32((volatile uint32_t *)TIMER_TIME_HIGH));
 
     return ((uint_64)high << 32) | low;
+}
+
+uint32_t getRandom() {
+    return (uint32_t)(read32((volatile uint32_t *)RANDOM_BIT) & 0b1);
 }
