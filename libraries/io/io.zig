@@ -2,6 +2,7 @@ const RESETS_BASE: u32 = 0x4000c000;
 const TIMER_BASE: u32 = 0x40054000;
 const TIMER_TIME_LOW: u32 = (TIMER_BASE + 0x28);
 const TIMER_TIME_HIGH: u32 = (TIMER_BASE + 0x24);
+const RANDOM_BIT: u32 = (0x40060000 + 0x1C);
 
 pub fn write32(address: *volatile u32, value: u32) void {
     address.* = value;
@@ -31,4 +32,8 @@ pub fn readTime() u64 {
     const high64: u64 = @intCast(high);
 
     return (high64 << 32) | low;
+}
+
+pub fn getRandom() usize {
+    return @intCast((read32(@ptrFromInt(RANDOM_BIT))) & 0b1);
 }
