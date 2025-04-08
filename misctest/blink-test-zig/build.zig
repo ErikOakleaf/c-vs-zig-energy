@@ -22,6 +22,7 @@ pub fn build(b: *std.Build) void {
     const io = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../libraries/io/io.zig" } });
 
     obj.root_module.addImport("io", io);
+    obj.root_module.unwind_tables = .none;
 
     const install_obj = b.addInstallFile(obj.getEmittedBin(), "main.o");
     b.getInstallStep().dependOn(&install_obj.step);

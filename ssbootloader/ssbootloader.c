@@ -34,20 +34,7 @@ void boot() {
     write32((volatile uint_32 *)(XIP_SSI_BASE + 0x0), CTRL0_XIP);
     write32((volatile uint_32 *)(XIP_SSI_BASE + 0xF4), CTRL0_XIP_SPI);
     write32((volatile uint_32 *)(XIP_SSI_BASE + 0x08), 1); // enable ssi
-
-    // Copy prgoram to sram
-    uint_8 *source =
-        (uint_8 *)0x10000100;                   // Program location in flash memory.
-                                                // offset by 256 bytes due to bootloader
-    uint_8 *destination = (uint_8 *)0x20000000; // SRAM location in memory
-
-    // copy program from flash to sram
-    for (int i = 0; i < 256 * 1024; i++) {
-        *destination = *source;
-        destination++;
-        source++;
-    }
-
+    //
     // set system clock to external crystal oscilator
 
     write32((volatile uint_32 *)(XOSC_BASE), 0xaa0);    // set osc to 1_15MHZ
@@ -63,6 +50,19 @@ void boot() {
             0x2); // set ref clock as xosc
     write32((volatile uint_32 *)(CLOCK_BASE + 0x3c),
             0); // set sys clock as xosc
+
+    // Copy prgoram to sram
+    uint_8 *source =
+        (uint_8 *)0x10000100;                   // Program location in flash memory.
+                                                // offset by 256 bytes due to bootloader
+    uint_8 *destination = (uint_8 *)0x20000000; // SRAM location in memory
+
+    // copy program from flash to sram
+    for (int i = 0; i < 256 * 1024; i++) {
+        *destination = *source;
+        destination++;
+        source++;
+    }
 
     // jump to the start of sram
     void *sram = (void *)0x20000000;
