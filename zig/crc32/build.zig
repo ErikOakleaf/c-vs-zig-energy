@@ -28,9 +28,12 @@ pub fn build(b: *std.Build) void {
     uart.addImport("io", io);
     uart.addImport("pico_math", math);
 
+    const test_data = b.createModule(.{ .root_source_file = .{ .cwd_relative = "../../test-data/crc32/crc32_data.zig" } });
+
     exe.root_module.addImport("io", io);
     exe.root_module.addImport("uart", uart);
     exe.root_module.addImport("pico_math", math);
+    exe.root_module.addImport("test_data", test_data);
 
     exe.linker_script = .{ .cwd_relative = "../../libraries/common/linker.ls" };
 

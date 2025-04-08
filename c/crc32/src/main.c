@@ -1,13 +1,14 @@
+#include "crc32_data.h"
 #include "io.h"
 #include "uart.h"
 #include <stdint.h>
 
 #define POLYNOM 0xEDB88320
 
-void crc32(const char input[], int size, uint32_t *output) {
+void crc32(const uint8_t input[], int size, uint32_t *output) {
     uint32_t crc = 0xFFFFFFFF;
 
-    for(int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++) {
         crc ^= input[i];
 
         for (int j = 0; j < 8; j++) {
@@ -24,19 +25,23 @@ void crc32(const char input[], int size, uint32_t *output) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    /*uint64_t initTime = readTime();*/
-    /*uint32_t amountTests = 500;*/
+    uart0Init();
+    uint64_t initTime = readTime();
+    uint32_t amountTests = 1;
 
     uint32_t output;
 
-    crc32("h", 1, &output);
-
-
+    for (int i = 0; i < amountTests; i++) {
+        for (int j = 0; j < NUM_ARRAYS; j++) {
+            crc32(crc32_data[j].data, crc32_data[j].size, &output);
+            uartSendU32(output);
+    uartSendString("\r\n");
+        }
+    }
 
     uart0Init();
-    uartSendU32(output);
-    /*uartSendU32(amountTests);*/
-    /*uartSendString(" tests done, took: ");*/
-    /*uartSendU32(readTime() - initTime);*/
-    /*uartSendString(" microseconds");*/
+    uartSendU32(amountTests);
+    uartSendString(" tests done, took: ");
+    uartSendU32(readTime() - initTime);
+    uartSendString(" microseconds");
 }
