@@ -16,6 +16,8 @@
               This implementation uses little endian byte order.
 *********************************************************************/
 
+// alterd sha256 implementation
+
 /****************************** MACROS ******************************/
 #define ROTLEFT(a, b) (((a) << (b)) | ((a) >> (32 - (b))))
 #define ROTRIGHT(a, b) (((a) >> (b)) | ((a) << (32 - (b))))
@@ -178,7 +180,6 @@ void printHash(uint8_t hash[32]) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    uart0Init();
     /*uint64_t initTime = readTime();*/
     /*uint32_t amountTests = 1;*/
 
