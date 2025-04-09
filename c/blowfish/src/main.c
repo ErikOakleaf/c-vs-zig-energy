@@ -3,7 +3,6 @@
 #include <stdint.h>
 
 /*********************************************************************
-* Filename:   blowfish.c
 * Author:     Brad Conte (brad AT bradconte.com)
 * Copyright:
 * Disclaimer: This code is presented "as is" without any guarantees.
@@ -12,6 +11,8 @@
               Algorithm specification can be found here:
                * http://www.schneier.com/blowfish.html
 *********************************************************************/
+
+// alterd blowfish implementation 
 
 typedef struct {
     uint32_t p[18];
@@ -62,6 +63,7 @@ void blowfish_encrypt(const uint8_t in[8], uint8_t out[8], const BLOWFISH_KEY *k
     ITERATION(l, r, t, 12);
     ITERATION(l, r, t, 13);
     ITERATION(l, r, t, 14);
+
     l ^= keystruct->p[15];
     F(l, t);
     r ^= t; // Last iteration has no swap()
