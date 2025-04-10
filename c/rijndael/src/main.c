@@ -2,7 +2,7 @@
 #include "uart.h"
 #include <stdint.h>
 
-//
+
 // A compact byte-oriented AES-256 implementation.
 // All lookup tables replaced with 'on the fly' calculations.
 //
@@ -22,6 +22,8 @@
 // WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+// alterd implemntation of aes256 rijndael
 
 typedef struct aes256_key_t {
     uint8_t raw[32];
@@ -313,4 +315,10 @@ void main() {
     /*uartSendString(" microseconds");*/
 
     printHex128(block.raw);
+
+    aes256_decrypt_ecb(&ctx, &block);
+    
+    for (int i = 0; i < 16; i++) {
+        uartSend((char)block.raw[i]);
+    }
 }
