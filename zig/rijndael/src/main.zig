@@ -307,30 +307,55 @@ fn printHex128(hex: [16]u8) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    // const initTime: u64 = io.readTime();
+    const initTime: u64 = io.readTime();
 
-    // const amountTests: u32 = 1;
+    var dummyBlock: Aes256Blk = undefined;
+    const dummySink: *volatile Aes256Blk = &dummyBlock;
 
     var key: Aes256Key = .{ .raw = .{ 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53 } };
 
     var ctx: Aes256Context = undefined;
-    aes256_init(&ctx, &key);
 
-    var block: Aes256Blk = .{ .raw = .{ 97, 99, 99, 111, 117, 110, 116, 97, 98, 105, 108, 105, 116, 105, 101, 115 } };
-    aes256_encrypt_ecb(&ctx, &block);
+    const amountTests: u32 = 500;
+    var block: Aes256Blk = undefined;
+
+    for (0..amountTests) |_| {
+        for (100..110) |i| {
+            block.raw[0] = @intCast(i);
+            block.raw[1] = @intCast(i);
+            block.raw[2] = @intCast(i);
+            block.raw[3] = @intCast(i);
+            block.raw[4] = @intCast(i);
+            block.raw[5] = @intCast(i);
+            block.raw[6] = @intCast(i);
+            block.raw[7] = @intCast(i);
+            block.raw[8] = @intCast(i);
+            block.raw[9] = @intCast(i);
+            block.raw[10] = @intCast(i);
+            block.raw[11] = @intCast(i);
+            block.raw[12] = @intCast(i);
+            block.raw[13] = @intCast(i);
+            block.raw[14] = @intCast(i);
+            block.raw[15] = @intCast(i);
+
+            aes256_init(&ctx, &key);
+
+            aes256_encrypt_ecb(&ctx, &block);
+
+            aes256_decrypt_ecb(&ctx, &block);
+
+            dummySink.* = block;
+
+            aes256_done(&ctx);
+        }
+    }
+
+    const finishTime: u64 = io.readTime() - initTime;
 
     uart.uart0Init();
-    // uart.uartSendU32(output);
-    // uart.uartSendU32(amountTests);
-    // uart.uartSendString(" tests done, took: ");
-    // uart.uartSendU32(@intCast(io.readTime() - initTime));
-    // uart.uartSendString(" microseconds");
-
-    printHex128(block.raw);
-
-    aes256_decrypt_ecb(&ctx, &block);
-
-    for (0..16) |i| {
-        uart.uartSend(block.raw[i]);
-    }
+    uart.uartSendString("\r\nZig rijndael(aes256): ");
+    uart.uartSendU32(amountTests);
+    uart.uartSendString(" tests done, took: ");
+    uart.uartSendU32(@intCast(finishTime));
+    uart.uartSendString(" microseconds");
 }

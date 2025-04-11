@@ -2,7 +2,6 @@
 #include "uart.h"
 #include <stdint.h>
 
-
 // A compact byte-oriented AES-256 implementation.
 // All lookup tables replaced with 'on the fly' calculations.
 //
@@ -296,29 +295,56 @@ void printHex128(uint8_t hex[16]) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    /*uint64_t initTime = readTime();*/
-    /*uint32_t amountTests = 1;*/
+    uint64_t initTime = readTime();
+
+    // dummy value to make sure performing of the algorithm does not get optimized away
+    aes256_blk_t dummyBlock;
+    volatile aes256_blk_t *dummySink = &dummyBlock;
 
     aes256_key_t key = {
         .raw = {97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53}};
 
     aes256_context_t ctx;
-    aes256_init(&ctx, &key);
 
-    aes256_blk_t block = {.raw = {97, 99, 99, 111, 117, 110, 116, 97, 98, 105, 108, 105, 116, 105, 101, 115}};
-    aes256_encrypt_ecb(&ctx, &block);
+    aes256_blk_t block;
+
+    uint32_t amountTests = 500;
+    for (int i = 0; i < amountTests; i++) {
+        for (int j = 100; j < 110; j++) {
+
+            block.raw[0] = i;
+            block.raw[1] = i;
+            block.raw[2] = i;
+            block.raw[3] = i;
+            block.raw[4] = i;
+            block.raw[5] = i;
+            block.raw[6] = i;
+            block.raw[7] = i;
+            block.raw[8] = i;
+            block.raw[9] = i;
+            block.raw[10] = i;
+            block.raw[11] = i;
+            block.raw[12] = i;
+            block.raw[13] = i;
+            block.raw[14] = i;
+            block.raw[15] = i;
+
+            aes256_init(&ctx, &key);
+            aes256_encrypt_ecb(&ctx, &block);
+            aes256_decrypt_ecb(&ctx, &block);
+
+            *dummySink = block;
+
+            aes256_done(&ctx);
+        }
+    }
+
+    uint64_t finishTime = readTime() - initTime;
 
     uart0Init();
-    /*uartSendU32(amountTests);*/
-    /*uartSendString(" tests done, took: ");*/
-    /*uartSendU32(readTime() - initTime);*/
-    /*uartSendString(" microseconds");*/
-
-    printHex128(block.raw);
-
-    aes256_decrypt_ecb(&ctx, &block);
-    
-    for (int i = 0; i < 16; i++) {
-        uartSend((char)block.raw[i]);
-    }
+    uartSendString("\r\nc rijndeal(aes256) : ");
+    uartSendU32(amountTests);
+    uartSendString(" tests done, took: ");
+    uartSendU32(finishTime);
+    uartSendString(" microseconds");
 }

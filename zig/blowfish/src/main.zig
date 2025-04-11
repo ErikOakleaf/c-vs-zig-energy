@@ -157,22 +157,43 @@ pub fn print64(digits: [8]u8) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    // const initTime: u64 = io.readTime();
+    const initTime: u64 = io.readTime();
+
+    // dummy value to make sure performing of the algorithm does not get optimized away
+    var dummyArray: [8]u8 = undefined;
+    const dummySink: *volatile [8]u8 = &dummyArray;
 
     const key: [5]u8 = .{ 104, 101, 108, 108, 111 };
     var output: [8]u8 = undefined;
-    const input: [8]u8 = .{ 65, 117, 100, 105, 101, 110, 99, 101 };
+    var input: [8]u8 = undefined;
     var keystruct: BLOWFISH_KEY = undefined;
 
     blowfish_key_setup(key[0..], &keystruct);
 
-    blowfish_encrypt(input[0..], output[0..], &keystruct);
+    const amountTests: usize = 500;
+    for (0..amountTests) |_| {
+        for (100..110) |i| {
+            input[0] = @intCast(i);
+            input[1] = @intCast(i);
+            input[2] = @intCast(i);
+            input[3] = @intCast(i);
+            input[4] = @intCast(i);
+            input[5] = @intCast(i);
+            input[6] = @intCast(i);
+            input[7] = @intCast(i);
+
+            blowfish_encrypt(input[0..], output[0..], &keystruct);
+
+            dummySink.* = output;
+        }
+    }
+
+    const finishTime: u64 = io.readTime() - initTime;
 
     uart.uart0Init();
-    // uart.uartSendU32(output);
-    // uart.uartSendU32(amountTests);
-    // uart.uartSendString(" tests done, took: ");
-    // uart.uartSendU32(@intCast(io.readTime() - initTime));
-    // uart.uartSendString(" microseconds");
-    print64(output);
+    uart.uartSendString("\r\nZig blowfish: ");
+    uart.uartSendU32(amountTests);
+    uart.uartSendString(" tests done, took: ");
+    uart.uartSendU32(@intCast(finishTime));
+    uart.uartSendString(" microseconds");
 }

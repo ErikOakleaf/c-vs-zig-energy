@@ -209,23 +209,38 @@ fn printHash(hash: [32]u8) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    // const initTime: u64 = io.readTime();
+    const initTime: u64 = io.readTime();
+
+    // dummy value to make sure performing of the algorithm does not get optimized away
+    var dummyArray: [32]u8 = undefined;
+    const dummySink: *volatile [32]u8 = &dummyArray;
 
     var output: [32]u8 = undefined;
-    const input: [5]u8 = .{ 111, 108, 108, 101, 104 };
+    var input: [5]u8 = undefined;
     var ctx: SHA256_CTX = undefined;
 
-    sha256_init(&ctx);
-    sha256_update(&ctx, input[0..]);
-    sha256_final(&ctx, output[0..]);
+    const amountTests: u32 = 500;
+    for (0..amountTests) |_| {
+        for (100..110) |i| {
+            input[0] = @intCast(i);
+            input[1] = @intCast(i);
+            input[2] = @intCast(i);
+            input[3] = @intCast(i);
+            input[4] = @intCast(i);
 
-    // const amountTests: u32 = 1;
+            sha256_init(&ctx);
+            sha256_update(&ctx, input[0..]);
+            sha256_final(&ctx, output[0..]);
+            dummySink.* = output;
+        }
+    }
+
+    const finishTime: u64 = io.readTime() - initTime;
 
     uart.uart0Init();
-    // uart.uartSendU32(output);
-    // uart.uartSendU32(amountTests);
-    // uart.uartSendString(" tests done, took: ");
-    // uart.uartSendU32(@intCast(io.readTime() - initTime));
-    // uart.uartSendString(" microseconds");
-    printHash(output);
+    uart.uartSendString("\r\nZig sha256: ");
+    uart.uartSendU32(amountTests);
+    uart.uartSendString(" tests done, took: ");
+    uart.uartSendU32(@intCast(finishTime));
+    uart.uartSendString(" microseconds");
 }

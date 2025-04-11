@@ -159,20 +159,20 @@ void sha256_final(SHA256_CTX *ctx, uint8_t hash[]) {
 void printHash(uint8_t hash[32]) {
     // Array of hex digits
     const char hexChars[] = "0123456789abcdef";
-    
+
     // Buffer for a single byte as hex (2 chars + null terminator)
     char hexByte[3];
     hexByte[2] = '\0';
-    
+
     for (int i = 0; i < 32; i++) {
         // Convert byte to two hex characters
-        hexByte[0] = hexChars[(hash[i] >> 4) & 0xF];  // high nibble
-        hexByte[1] = hexChars[hash[i] & 0xF];         // low nibble
-        
+        hexByte[0] = hexChars[(hash[i] >> 4) & 0xF]; // high nibble
+        hexByte[1] = hexChars[hash[i] & 0xF];        // low nibble
+
         // Send the hex representation of this byte
         uartSendString(hexByte);
     }
-    
+
     // Optional: send a newline at the end
     uartSendString("\r\n");
 }
@@ -180,23 +180,41 @@ void printHash(uint8_t hash[32]) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    /*uint64_t initTime = readTime();*/
-    /*uint32_t amountTests = 1;*/
+    uint64_t initTime = readTime();
+
+    // dummy value to make sure performing of the algorithm does not get optimized away
+    uint8_t dummyArray[32];
+    volatile uint8_t(*dummySink)[32] = &dummyArray;
 
     uint8_t output[32];
+    uint8_t input[5];
     SHA256_CTX ctx;
-    const char hello_string[] = "olleh";
-    const uint8_t *input = (const uint8_t *)hello_string;
 
-    sha256_init(&ctx);
-    sha256_update(&ctx, input, 5);
-    sha256_final(&ctx, output);
+    uint32_t amountTests = 500;
+    for (int i = 0; i < amountTests; i++) {
+        for (int j = 100; j < 110; j++) {
+            input[0] = j;
+            input[1] = j;
+            input[2] = j;
+            input[3] = j;
+            input[4] = j;
+
+            sha256_init(&ctx);
+            sha256_update(&ctx, input, 5);
+            sha256_final(&ctx, output);
+            for (int k = 0; k < 32; k++) {
+                (*dummySink)[k] = output[k];
+            }
+        }
+    }
+
+
+    uint64_t finishTime = readTime() - initTime;
 
     uart0Init();
-    /*uartSendU32(amountTests);*/
-    /*uartSendString(" tests done, took: ");*/
-    /*uartSendU32(readTime() - initTime);*/
-    /*uartSendString(" microseconds");*/
-
-    printHash(output);
+    uartSendString("\r\nc sha256 : ");
+    uartSendU32(amountTests);
+    uartSendString(" tests done, took: ");
+    uartSendU32(finishTime);
+    uartSendString(" microseconds");
 }

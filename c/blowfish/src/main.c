@@ -12,7 +12,7 @@
                * http://www.schneier.com/blowfish.html
 *********************************************************************/
 
-// alterd blowfish implementation 
+// alterd blowfish implementation
 
 typedef struct {
     uint32_t p[18];
@@ -121,21 +121,21 @@ void blowfish_key_setup(const uint8_t user_key[], BLOWFISH_KEY *keystruct, int l
 void print64(uint8_t digits[8]) {
     // Array of hex characters
     const char hexChars[] = "0123456789abcdef";
-    
+
     // Buffer for a single byte as hex (2 chars plus null terminator)
     char hexByte[3];
-    hexByte[2] = '\0';  // null terminator
-    
+    hexByte[2] = '\0'; // null terminator
+
     // Loop over each of the 8 bytes of the 64-bit value
     for (int i = 0; i < 8; i++) {
         // For each byte, convert the high nibble and the low nibble to hex
-        hexByte[0] = hexChars[(digits[i] >> 4) & 0xF];  // high nibble
-        hexByte[1] = hexChars[digits[i] & 0xF];           // low nibble
-        
+        hexByte[0] = hexChars[(digits[i] >> 4) & 0xF]; // high nibble
+        hexByte[1] = hexChars[digits[i] & 0xF];        // low nibble
+
         // Send the two-character hex representation of this byte
         uartSendString(hexByte);
     }
-    
+
     // Optionally, send a newline or carriage return at the end
     uartSendString("\r\n");
 }
@@ -143,24 +143,44 @@ void print64(uint8_t digits[8]) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    /*uint64_t initTime = readTime();*/
-    /*uint32_t amountTests = 1;*/
+    uint64_t initTime = readTime();
 
-    const char hello_string[] = "hello";
-    const uint8_t *key_input = (const uint8_t *)hello_string;
+    // dummy value to make sure performing of the algorithm does not get optimized away
+    uint8_t dummyArray[8];
+    volatile uint8_t (*dummySink)[8] = &dummyArray;
+
+    const uint8_t key[8] = {104, 101, 108, 108, 111};
     uint8_t output[8];
-    const uint8_t input[8] = {65, 117, 100, 105, 101, 110, 99, 101};
-
+    uint8_t input[8]; 
     BLOWFISH_KEY keystruct;
-    blowfish_key_setup(key_input, &keystruct, 5);
 
-    blowfish_encrypt(input, output, &keystruct);
+    blowfish_key_setup(key, &keystruct, 5);
+
+    uint32_t amountTests = 500;
+    for (int i = 0; i < amountTests; i++) {
+        for (int j = 100; j < 110; j++) {
+            input[0] = j;
+            input[1] = j;
+            input[2] = j;
+            input[3] = j;
+            input[4] = j;
+            input[5] = j;
+            input[6] = j;
+            input[7] = j;
+            blowfish_encrypt(input, output, &keystruct);
+
+            for (int k = 0; k < 8; k++) {
+                (*dummySink)[k] = output[k];
+            }
+        }
+    }
+
+    uint64_t finishTime = readTime() - initTime;
 
     uart0Init();
-    /*uartSendU32(amountTests);*/
-    /*uartSendString(" tests done, took: ");*/
-    /*uartSendU32(readTime() - initTime);*/
-    /*uartSendString(" microseconds");*/
-    
-    print64(output);
+    uartSendString("\r\nc blowfish : ");
+    uartSendU32(amountTests);
+    uartSendString(" tests done, took: ");
+    uartSendU32(finishTime);
+    uartSendString(" microseconds");
 }
