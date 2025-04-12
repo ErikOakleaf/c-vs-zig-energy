@@ -3,7 +3,7 @@ const uart = @import("uart");
 const test_data = @import("test_data");
 const POLYNOM = 0xEDB88320;
 
-fn crc32(input: []const u8, output: *u32) void {
+fn crc32(input: []u8, output: *u32) void {
     var crc: u32 = 0xFFFFFFFF;
 
     for (input) |char| {
@@ -23,25 +23,40 @@ fn crc32(input: []const u8, output: *u32) void {
 
 export fn main() linksection(".main") void {
     io.timerInit();
-    uart.uart0Init();
     const initTime: u64 = io.readTime();
 
-    const amountTests: u32 = 1;
+    var dummyValue: u32 = undefined;
+    const dummySink: *volatile u32 = &dummyValue;
 
     var output: u32 = undefined;
+    var input: [10]u8 = undefined;
 
+    const amountTests: u32 = 500;
     for (0..amountTests) |_| {
-        for (test_data.crc32_data[0..]) |testCase| {
-            crc32(testCase, &output);
-            uart.uartSendU32(output);
-            uart.uartSendString("\r\n");
+        for (100..110) |i| {
+            input[0] = @intCast(i);
+            input[1] = @intCast(i);
+            input[2] = @intCast(i);
+            input[3] = @intCast(i);
+            input[4] = @intCast(i);
+            input[5] = @intCast(i);
+            input[6] = @intCast(i);
+            input[7] = @intCast(i);
+            input[8] = @intCast(i);
+            input[9] = @intCast(i);
+
+            crc32(input[0..], &output);
+
+            dummySink.* = output;
         }
     }
 
+    const finishTime: u64 = io.readTime() - initTime;
+
     uart.uart0Init();
-    uart.uartSendU32(output);
+    uart.uartSendString("\r\nZig crc32: ");
     uart.uartSendU32(amountTests);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime() - initTime));
+    uart.uartSendU32(@intCast(finishTime));
     uart.uartSendString(" microseconds");
 }

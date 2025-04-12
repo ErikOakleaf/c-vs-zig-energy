@@ -1,4 +1,3 @@
-#include "crc32_data.h"
 #include "io.h"
 #include "uart.h"
 #include <stdint.h>
@@ -25,23 +24,42 @@ void crc32(const uint8_t input[], int size, uint32_t *output) {
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
-    uart0Init();
     uint64_t initTime = readTime();
-    uint32_t amountTests = 1;
+
+    uint32_t dummyValue;
+    volatile uint32_t *dummySink = &dummyValue;
 
     uint32_t output;
 
+    uint8_t input[10];
+
+    uint32_t amountTests = 500;
     for (int i = 0; i < amountTests; i++) {
-        for (int j = 0; j < NUM_ARRAYS; j++) {
-            crc32(crc32_data[j].data, crc32_data[j].size, &output);
-            uartSendU32(output);
-    uartSendString("\r\n");
+        for (int j = 100; j < 110; j++) {
+            input[0] = j;
+            input[1] = j;
+            input[2] = j;
+            input[3] = j;
+            input[4] = j;
+            input[5] = j;
+            input[6] = j;
+            input[7] = j;
+            input[8] = j;
+            input[9] = j;
+
+            crc32(input, 10, &output);
+            
+            *dummySink = output;
         }
     }
 
+
+    uint64_t finishTime = readTime() - initTime;
+
     uart0Init();
+    uartSendString("\r\nc crc32 : ");
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime() - initTime);
+    uartSendU32(finishTime);
     uartSendString(" microseconds");
 }
