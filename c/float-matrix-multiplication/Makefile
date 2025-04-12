@@ -4,7 +4,7 @@ LINK_ARGS = -nostdlib -Wl,--gc-sections
 BOOTROM = ../../ssbootloader/out/bootrom.bin
 LIBRARIES = ../../libraries
 TEST_DATA = ../../test-data
-INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart -I$(LIBRARIES)/math -I$(TEST_DATA)/float-matrix-multiplication
+INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart -I$(LIBRARIES)/math 
 LINKER = $(LIBRARIES)/common/linker.ld
 
 default: setup compile link convert
