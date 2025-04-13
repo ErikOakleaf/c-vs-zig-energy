@@ -153,6 +153,9 @@ export fn main() linksection(".main") void {
     io.timerInit();
     const initTime: u64 = io.readTime();
 
+    var dummyArray: [50]i32 = undefined;
+    const dummySink: *volatile [50]i32 = &dummyArray;
+
     var distances: [GRAPH_SIZE]i32 = undefined;
     var previous: [GRAPH_SIZE]i32 = undefined;
     var minHeap: [GRAPH_SIZE]Vertex = undefined;
@@ -165,13 +168,18 @@ export fn main() linksection(".main") void {
         for (&testData.dijkstrasTestDataArray) |*testGraph| {
             dijkstras(&testGraph.graph, testGraph.size, testGraph.source, &distances, &previous, &minHeap, &heapLookup, &visited);
 
-            // printPath(&previous, testGraph.destination);
+            for (0..50) |x| {
+                dummySink.*[x] = previous[x];
+            }
         }
     }
 
+    const finishTime: u64 = io.readTime() - initTime;
+
     uart.uart0Init();
+    uart.uartSendString("\r\nZig dijkstras : ");
     uart.uartSendU32(ammountTest);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime() - initTime));
+    uart.uartSendU32(@intCast(finishTime));
     uart.uartSendString(" microseconds");
 }

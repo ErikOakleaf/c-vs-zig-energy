@@ -160,9 +160,10 @@ void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
 
-    uint64_t initTime = readTime(); 
+    uint64_t initTime = readTime();
 
-    uart0Init();
+    int dummyArray[GRAPH_SIZE];
+    volatile int(*dummySink)[GRAPH_SIZE] = &dummyArray;
 
     int distances[GRAPH_SIZE];
     int previous[GRAPH_SIZE];
@@ -182,13 +183,19 @@ void main() {
                       minHeap,
                       heapLookup,
                       visited);
-            /*printPath(previous, dijkstrasTestDataArray[i].destination);*/
+        }
+
+        for (int x = 0; x < 50; x++) {
+            (*dummySink)[x] = previous[x];
         }
     }
 
+    uint64_t finishTime = readTime() - initTime;
+
     uart0Init();
+    uartSendString("\r\nc dijkstras : ");
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32((uint32_t)(readTime() - initTime));
+    uartSendU32((uint32_t)(finishTime));
     uartSendString(" microseconds");
 }
