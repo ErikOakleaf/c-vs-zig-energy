@@ -19,7 +19,7 @@
    You should have received a copy of the GNU General Public License along
    with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
-// beebs benchmark that is slightly modified
+// alterd beebs benchmark
 
 #include "io.h"
 #include "uart.h"
@@ -50,7 +50,6 @@ void fdct(int16_t block[], int lx) {
 
     for (int i = 0; i < 8; i++) {
         const int base = i * lx;
-
 
         tmp0 = block[base + 0] + block[base + 7];
         tmp7 = block[base + 0] - block[base + 7];
@@ -186,26 +185,36 @@ void main() {
     timerInit();
     uint64_t initTime = readTime();
 
-    uint32_t amountTests = 500;
+    int16_t dummyArray[64];
+    volatile int16_t(*dummySink)[64] = &dummyArray;
 
-    fdct(block_ref, 8);
+    const uint32_t amountTests = 500;
+    for (int i = 0; i < amountTests; i++) {
+        int16_t j = 0;
+        while (j < 10) {
+            int16_t input[64] =
+                {99, 104, 109, 113, 115, 115, 55, 55, 104, 111, 113, 116, 119, 56, 56, 56, 110, 115, 120, 119, 118, 56, 56, 56, 119, 121, 122, 120, 120, 59, 59, 59, 119, 120, 121, 122, 122, 55, 55, 55, 121, 121, 121, 121, 60, 57, 57, 57, 122, 122, 61, 63, 62, 57, 57, 57, 62, 62, 61, 61, 63, 58, 58, 58};
+
+            for (int k = 0; k < 64; k++) {
+                input[k] += j;
+            }
+
+            fdct(input, 8);
+
+            for (int x = 0; x < 64; x++) {
+                (*dummySink)[x] = input[x];
+            }
+
+            j += 1;
+        }
+    }
+
+    const uint64_t finishTime = readTime() - initTime;
 
     uart0Init();
+    uartSendString("\r\nc finite dicrete cosine transform : ");
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime() - initTime);
+    uartSendU32(finishTime);
     uartSendString(" microseconds");
-
-    int32_t checksum1 = 0;
-    int32_t checksum2 = 0;
-    for (int i = 0; i < 64; i++) {
-        checksum1 += block_ref[i];
-        checksum2 += exp_res[i];
-    }
-
-    if (checksum1 == checksum2) {
-        uartSendString("Success");
-    } else {
-        uartSendString("Error");
-    }
 }

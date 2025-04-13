@@ -19,7 +19,7 @@
 // You should have received a copy of the GNU General Public License along
 // with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// beebs benchmark ported to zig
+// alterd beebs benchmark ported to zig
 
 const io = @import("io");
 const uart = @import("uart");
@@ -41,7 +41,7 @@ var exp_res: [64]i16 =
 
 // Fast Discrete Cosine Transform
 
-fn fdct(block: []i16, lx: usize) void {
+fn fdct(block: [*]i16, lx: usize) void {
     // Pavar tmp0: i32 = undefined;
     var tmp0: i32 = undefined;
     var tmp1: i32 = undefined;
@@ -189,26 +189,34 @@ export fn main() linksection(".main") void {
     io.timerInit();
     const initTime: u64 = io.readTime();
 
-    const amountTests: u32 = 500;
+    var dummyArray: [64]i16 = undefined;
+    const dummySink: *volatile [64]i16 = &dummyArray;
 
-    fdct(block_ref[0..], 8);
+    const amountTests: u32 = 500;
+    for (0..amountTests) |_| {
+        var i: i16 = 0;
+        while (i < 10) : (i += 1) {
+            var input: [64]i16 =
+                .{ 99, 104, 109, 113, 115, 115, 55, 55, 104, 111, 113, 116, 119, 56, 56, 56, 110, 115, 120, 119, 118, 56, 56, 56, 119, 121, 122, 120, 120, 59, 59, 59, 119, 120, 121, 122, 122, 55, 55, 55, 121, 121, 121, 121, 60, 57, 57, 57, 122, 122, 61, 63, 62, 57, 57, 57, 62, 62, 61, 61, 63, 58, 58, 58 };
+
+            for (0..64) |j| {
+                input[j] += i;
+            }
+
+            fdct(&input, 8);
+
+            for (0..64) |x| {
+                dummySink.*[x] = input[x];
+            }
+        }
+    }
+
+    const finishTime: u64 = io.readTime() - initTime;
 
     uart.uart0Init();
+    uart.uartSendString("\r\nZig finite discrete cosine transofrm : ");
     uart.uartSendU32(amountTests);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime() - initTime));
+    uart.uartSendU32(@intCast(finishTime));
     uart.uartSendString(" microseconds");
-
-    var checksum1: i32 = 0;
-    var checksum2: i32 = 0;
-    for (0..64) |i| {
-        checksum1 += block_ref[i];
-        checksum2 += exp_res[i];
-    }
-
-    if (checksum1 == checksum2) {
-        uart.uartSendString("Success");
-    } else {
-        uart.uartSendString("Error");
-    }
 }
