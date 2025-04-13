@@ -1,4 +1,3 @@
-#include "test_matrices.h"
 #include "uart.h"
 #include <stdint.h>
 
@@ -28,46 +27,54 @@ void testChecksum(int result[5][5], int checksum) {
     }
 }
 
-void printResult(int result[5][5]) {
-    uart0Init();
-    int compare = 0;
-    for (int i = 0; i < 5; i++) {
-        for (int j = 0; j < 5; j++) {
-            compare += result[j][i];
-        }
-    }
-
-    uartSendU32((uint32_t)compare);
-    uartSendString("\r\n");
-
-    /*for (int i = 0; i < 5; i++) {*/
-    /*    uartSendString("\r\n");*/
-    /*    for (int j = 0; j < 5; j++) {*/
-    /*        uartSendU32((uint32_t)result[j][i]);*/
-    /*        uartSend(' ');*/
-    /*    }*/
-    /*}*/
-}
-
 void main(void) __attribute__((section(".main")));
 void main() {
     timerInit();
     uint64_t initTime = readTime();
 
-    int amountTests = 500;
+    int dummyArray[5][5];
+    volatile int (*dummySink)[5][5] = &dummyArray;
 
     int result[5][5];
 
+    int input1[5][5];
+    int input2[5][5];
+
+    int amountTests = 500;
     for (int i = 0; i < amountTests; i++) {
-        for (int j = 0; j < NUM_TEST_MATRICES; j++) {
-            matrixMultiply5x5(test_matrices[j].matrix1, test_matrices[j].matrix2, result);
-            testChecksum(result, test_matrices[j].result_checksum);
+        int j = 0;
+        while (j < 10) {
+            for (int k = 0; k < 5; k++) {
+                input1[k][0] = j;
+                input1[k][1] = j;
+                input1[k][2] = j;
+                input1[k][3] = j;
+                input1[k][4] = j;
+
+                input2[k][0] = j;
+                input2[k][1] = j;
+                input2[k][2] = j;
+                input2[k][3] = j;
+                input2[k][4] = j;
+            }
+
+            matrixMultiply5x5(input1, input2, result);
+
+            for (int x = 0; x < 5; x++) {
+                for (int y = 0; y < 5; y++) {
+                    (*dummySink)[x][y] = result[x][y];
+                }
+            }
+
+            j += 1;
         }
     }
+    uint64_t finishTime = readTime() - initTime;
 
     uart0Init();
+    uartSendString("\r\nc int matrix multiplication : ");
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime() - initTime);
+    uartSendU32(finishTime);
     uartSendString(" microseconds");
 }
