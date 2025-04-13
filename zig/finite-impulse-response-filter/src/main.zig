@@ -102,12 +102,11 @@ export fn main() linksection(".main") void {
             for (0..700) |j| {
                 inData[j] += i;
             }
-        }
+            firFilterInt(inData[0 .. inData.len - 1], output[0..], firInt[0 .. firInt.len - 1], 285);
 
-        firFilterInt(inData[0 .. inData.len - 1], output[0..], firInt[0 .. firInt.len - 1], 285);
-
-        for (0..OUTPUT_SIZE) |x| {
-            dummySink.*[x] = output[x];
+            for (0..OUTPUT_SIZE) |x| {
+                dummySink.*[x] = output[x];
+            }
         }
     }
 
