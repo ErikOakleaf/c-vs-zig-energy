@@ -17,12 +17,10 @@
    You should have received a copy of the GNU General Public License
    along with this program. If not, see <http://www.gnu.org/licenses/>. */
 
-
 // beebs benchmark that is slightly modified
 
-
-#include "uart.h"
 #include "io.h"
+#include "uart.h"
 #include <math.h>
 #include <stdint.h>
 
@@ -61,6 +59,9 @@ void main() {
     timerInit();
     uint64_t initTime = readTime();
 
+    double dummyArray[48];
+    volatile double (*dummySink)[48] = &dummyArray;
+
     double a1 = 1.0, b1 = -10.5, c1 = 32.0, d1 = -30.0;
     double a2 = 1.0, b2 = -4.5, c2 = 17.0, d2 = -30.0;
     double a3 = 1.0, b3 = -3.5, c3 = 22.0, d3 = -31.0;
@@ -68,33 +69,50 @@ void main() {
 
     int solutions;
 
-    double output[48] = {0};
+    double output[48];
 
     uint32_t amountTests = 500;
-
     for (int i = 0; i < amountTests; i++) {
         /* solve some cubic functions */
         /* should get 3 solutions: 2, 6 & 2.5   */
         SolveCubic(a1, b1, c1, d1, &solutions, output);
+        for (int x = 0; x < 48; x++) {
+            (*dummySink)[x] = output[x];
+        }
         /* should get 1 solution: 2.5           */
         SolveCubic(a2, b2, c2, d2, &solutions, output);
+        for (int x = 0; x < 48; x++) {
+            (*dummySink)[x] = output[x];
+        }
         SolveCubic(a3, b3, c3, d3, &solutions, output);
+        for (int x = 0; x < 48; x++) {
+            (*dummySink)[x] = output[x];
+        }
         SolveCubic(a4, b4, c4, d4, &solutions, output);
+        for (int x = 0; x < 48; x++) {
+            (*dummySink)[x] = output[x];
+        }
         /* Now solve some random equations */
         for (a1 = 1; a1 < 3; a1++) {
             for (b1 = 10; b1 > 8; b1--) {
                 for (c1 = 5; c1 < 6; c1 += 0.5) {
                     for (d1 = -1; d1 > -3; d1--) {
                         SolveCubic(a1, b1, c1, d1, &solutions, output);
+                        for (int x = 0; x < 48; x++) {
+                            (*dummySink)[x] = output[x];
+                        }
                     }
                 }
             }
         }
     }
 
+    uint64_t finishTime = readTime() - initTime;
+
     uart0Init();
+    uartSendString("\r\nc cubic root solver : ");
     uartSendU32(amountTests);
     uartSendString(" tests done, took: ");
-    uartSendU32(readTime() - initTime);
+    uartSendU32(finishTime);
     uartSendString(" microseconds");
 }

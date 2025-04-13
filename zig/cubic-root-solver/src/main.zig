@@ -52,6 +52,9 @@ export fn main() linksection(".main") void {
     io.timerInit();
     const initTime: u64 = io.readTime();
 
+    var dummyArray: [48]f64 = undefined;
+    const dummySink: *volatile [48]f64 = &dummyArray;
+
     const a1: f64 = 1.0;
     const b1: f64 = -10.5;
     const c1: f64 = 32.0;
@@ -82,10 +85,22 @@ export fn main() linksection(".main") void {
         // solve some cubic functions
         // should get 3 solutions: 2, 6 & 2.5
         SolveCubic(a1, b1, c1, d1, &solutions, &output);
+        for (0..48) |x| {
+            dummySink.*[x] = output[x];
+        }
         // should get 1 solution: 2.5
         SolveCubic(a2, b2, c2, d2, &solutions, &output);
+        for (0..48) |x| {
+            dummySink.*[x] = output[x];
+        }
         SolveCubic(a3, b3, c3, d3, &solutions, &output);
+        for (0..48) |x| {
+            dummySink.*[x] = output[x];
+        }
         SolveCubic(a4, b4, c4, d4, &solutions, &output);
+        for (0..48) |x| {
+            dummySink.*[x] = output[x];
+        }
         // Now solve some random equations
         var inner_a1: f64 = 1;
         while (inner_a1 < 3) : (inner_a1 += 1) {
@@ -96,15 +111,21 @@ export fn main() linksection(".main") void {
                     var inner_d1: f64 = -1;
                     while (inner_d1 > -3) : (inner_d1 -= 1) {
                         SolveCubic(inner_a1, inner_b1, inner_c1, inner_d1, &solutions, &output);
+                        for (0..48) |x| {
+                            dummySink.*[x] = output[x];
+                        }
                     }
                 }
             }
         }
     }
 
+    const finishTime: u64 = io.readTime() - initTime;
+
     uart.uart0Init();
+    uart.uartSendString("\r\nZig cubic root solver : ");
     uart.uartSendU32(amountTests);
     uart.uartSendString(" tests done, took: ");
-    uart.uartSendU32(@intCast(io.readTime() - initTime));
+    uart.uartSendU32(@intCast(finishTime));
     uart.uartSendString(" microseconds");
 }
