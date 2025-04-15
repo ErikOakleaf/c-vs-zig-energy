@@ -298,8 +298,8 @@ void main() {
     uint64_t initTime = readTime();
 
     // dummy value to make sure performing of the algorithm does not get optimized away
-    aes256_blk_t dummyBlock;
-    volatile aes256_blk_t *dummySink = &dummyBlock;
+    uint8_t dummyArray[16];
+    volatile uint8_t (*dummySink)[16] = &dummyArray;
 
     aes256_key_t key = {
         .raw = {97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53}};
@@ -333,7 +333,9 @@ void main() {
             aes256_encrypt_ecb(&ctx, &block);
             aes256_decrypt_ecb(&ctx, &block);
 
-            *dummySink = block;
+            for (int x = 0; x < 16; x++) {
+                (*dummySink)[x] = block.raw[x];
+            }
 
             aes256_done(&ctx);
         }

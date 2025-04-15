@@ -231,7 +231,10 @@ export fn main() linksection(".main") void {
             sha256_init(&ctx);
             sha256_update(&ctx, input[0..]);
             sha256_final(&ctx, output[0..]);
-            dummySink.* = output;
+
+            for (0..32) |x| {
+                dummySink.*[x] = output[x];
+            }
         }
     }
 

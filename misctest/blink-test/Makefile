@@ -1,8 +1,8 @@
 ARM = arm-none-eabi
-GCC_ARGS = -Wall -Werror -O3 -ffreestanding -mcpu=cortex-m0plus -mthumb -ffunction-sections -fdata-sections
+GCC_ARGS = -Wall -Werror -O3 -ffreestanding -mcpu=cortex-m0plus -mthumb -march=armv6-m -ffunction-sections -fdata-sections -ffast-math
 CLANG_ARGS = --target=arm-none-eabi -mcpu=cortex-m0plus -march=armv6-m -mthumb -Wall -ffunction-sections -fdata-sections -O3 -ffast-math
-LINK_ARGS = -nostdlib -Wl,--gc-sections
-LINK_ARGS_CLANG = --target=arm-none-eabi -mcpu=cortex-m0plus -march=armv6-m -nostdlib
+LINK_ARGS = -Wl,--gc-sections -mcpu=cortex-m0plus -march=armv6-m
+LINK_ARGS_CLANG = --target=arm-none-eabi -mcpu=cortex-m0plus -march=armv6-m -Wl,--gc-sections
 BOOTROM = ../../ssbootloader/out/bootrom.bin
 LIBRARIES = ../../libraries
 INCLUDES = -I$(LIBRARIES) -I$(LIBRARIES)/io -I$(LIBRARIES)/uart
@@ -23,7 +23,7 @@ compile:
 link:
 	$(ARM)-gcc $(LINK_ARGS) -T $(LINKER) out/main.o out/io.o -o out/main.elf
 	$(ARM)-objdump -D out/main.elf > out/main.asm
-	clang $(LINK_ARGS_CLANG)  out/main_clang.o out/io_clang.o -nostdlib -T$(LINKER) -o out/main_clang.elf
+	clang $(LINK_ARGS_CLANG)  out/main_clang.o out/io_clang.o -T$(LINKER) -o out/main_clang.elf
 	$(ARM)-objdump -D out/main_clang.elf > out/main_clang.asm
 
 

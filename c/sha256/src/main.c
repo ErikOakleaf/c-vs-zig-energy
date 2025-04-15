@@ -202,8 +202,8 @@ void main() {
             sha256_init(&ctx);
             sha256_update(&ctx, input, 5);
             sha256_final(&ctx, output);
-            for (int k = 0; k < 32; k++) {
-                (*dummySink)[k] = output[k];
+            for (int x = 0; x < 32; x++) {
+                (*dummySink)[x] = output[x];
             }
         }
     }

@@ -309,8 +309,8 @@ export fn main() linksection(".main") void {
     io.timerInit();
     const initTime: u64 = io.readTime();
 
-    var dummyBlock: Aes256Blk = undefined;
-    const dummySink: *volatile Aes256Blk = &dummyBlock;
+    var dummyArray: [16]u8 = undefined;
+    const dummySink: *volatile [16]u8 = &dummyArray;
 
     var key: Aes256Key = .{ .raw = .{ 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53 } };
 
@@ -344,7 +344,9 @@ export fn main() linksection(".main") void {
 
             aes256_decrypt_ecb(&ctx, &block);
 
-            dummySink.* = block;
+            for (0..16) |x| {
+                dummySink.*[x] = block.raw[x];
+            }
 
             aes256_done(&ctx);
         }
