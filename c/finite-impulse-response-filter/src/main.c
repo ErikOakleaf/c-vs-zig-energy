@@ -85,7 +85,7 @@ void main() {
     uint32_t dummyArray[OUTPUTSIZE];
     volatile uint32_t(*dummySink)[OUTPUTSIZE] = &dummyArray;
 
-    const uint32_t amountTests = 500;
+    const uint32_t amountTests = 25;
 
     for (int i = 0; i < amountTests; i++) {
         uint32_t inData[701] = {

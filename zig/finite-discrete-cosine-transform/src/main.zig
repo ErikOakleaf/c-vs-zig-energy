@@ -192,7 +192,7 @@ export fn main() linksection(".main") void {
     var dummyArray: [64]i16 = undefined;
     const dummySink: *volatile [64]i16 = &dummyArray;
 
-    const amountTests: u32 = 500;
+    const amountTests: u32 = 25;
     for (0..amountTests) |_| {
         var i: i16 = 0;
         while (i < 10) : (i += 1) {

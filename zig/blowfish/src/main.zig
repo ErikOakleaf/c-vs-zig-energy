@@ -170,7 +170,7 @@ export fn main() linksection(".main") void {
 
     blowfish_key_setup(key[0..], &keystruct);
 
-    const amountTests: usize = 500;
+    const amountTests: usize = 25;
     for (0..amountTests) |_| {
         for (100..110) |i| {
             input[0] = @intCast(i);

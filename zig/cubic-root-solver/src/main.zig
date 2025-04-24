@@ -79,7 +79,7 @@ export fn main() linksection(".main") void {
 
     var output: [48]f64 = undefined;
 
-    const amountTests: u32 = 500;
+    const amountTests: u32 = 25;
 
     for (0..amountTests) |_| {
         // solve some cubic functions

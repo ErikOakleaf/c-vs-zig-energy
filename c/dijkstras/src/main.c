@@ -171,7 +171,7 @@ void main() {
     int heapLookup[GRAPH_SIZE];
     int visited[GRAPH_SIZE];
 
-    int amountTests = 500;
+    int amountTests = 25;
 
     for (int i = 0; i < amountTests; i++) {
         for (int i = 0; i < dijkstrasTestDataArraySize; i++) {

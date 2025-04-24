@@ -188,7 +188,7 @@ void main() {
     int16_t dummyArray[64];
     volatile int16_t(*dummySink)[64] = &dummyArray;
 
-    const uint32_t amountTests = 500;
+    const uint32_t amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         int16_t j = 0;
         while (j < 10) {

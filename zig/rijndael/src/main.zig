@@ -316,7 +316,7 @@ export fn main() linksection(".main") void {
 
     var ctx: Aes256Context = undefined;
 
-    const amountTests: u32 = 500;
+    const amountTests: u32 = 25;
     var block: Aes256Blk = undefined;
 
     for (0..amountTests) |_| {

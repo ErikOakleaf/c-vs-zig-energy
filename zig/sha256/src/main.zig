@@ -219,7 +219,7 @@ export fn main() linksection(".main") void {
     var input: [5]u8 = undefined;
     var ctx: SHA256_CTX = undefined;
 
-    const amountTests: u32 = 500;
+    const amountTests: u32 = 25;
     for (0..amountTests) |_| {
         for (100..110) |i| {
             input[0] = @intCast(i);

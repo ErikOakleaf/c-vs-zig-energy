@@ -36,7 +36,7 @@ void main() {
     double input1[5][5];
     double input2[5][5];
 
-    int amountTests = 500;
+    int amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         double j = 0.5;
         while (j < 10.5) {

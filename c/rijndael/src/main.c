@@ -308,7 +308,7 @@ void main() {
 
     aes256_blk_t block;
 
-    uint32_t amountTests = 500;
+    uint32_t amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         for (int j = 100; j < 110; j++) {
 

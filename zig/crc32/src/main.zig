@@ -31,7 +31,7 @@ export fn main() linksection(".main") void {
     var output: u32 = undefined;
     var input: [10]u8 = undefined;
 
-    const amountTests: u32 = 500;
+    const amountTests: u32 = 25;
     for (0..amountTests) |_| {
         for (100..110) |i| {
             input[0] = @intCast(i);

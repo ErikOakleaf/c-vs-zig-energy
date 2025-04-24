@@ -33,7 +33,7 @@ void main() {
 
     uint8_t input[10];
 
-    uint32_t amountTests = 500;
+    uint32_t amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         for (int j = 100; j < 110; j++) {
             input[0] = j;

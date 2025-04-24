@@ -33,7 +33,7 @@ export fn main() linksection(".main") void {
 
     var result: [5][5]f64 = undefined;
 
-    const amountTest: usize = 500;
+    const amountTest: usize = 25;
     for (0..amountTest) |_| {
         var i: f64 = 0.5;
         while (i < 10.5) : (i += 1) {

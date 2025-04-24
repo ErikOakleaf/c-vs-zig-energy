@@ -71,7 +71,7 @@ void main() {
 
     double output[48];
 
-    uint32_t amountTests = 500;
+    uint32_t amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         /* solve some cubic functions */
         /* should get 3 solutions: 2, 6 & 2.5   */

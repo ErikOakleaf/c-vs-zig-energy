@@ -38,7 +38,7 @@ export fn main() linksection(".main") void {
 
     var result: [5][5]i32 = undefined;
 
-    const amountTest: usize = 500;
+    const amountTest: usize = 25;
     for (0..amountTest) |_| {
         var i: i32 = 0;
         while (i < 10) : (i += 1) {

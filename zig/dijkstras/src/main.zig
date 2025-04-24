@@ -162,7 +162,7 @@ export fn main() linksection(".main") void {
     var heapLookup: [GRAPH_SIZE]i32 = undefined;
     var visited: [GRAPH_SIZE]i32 = undefined;
 
-    const ammountTest: u32 = 500;
+    const ammountTest: u32 = 25;
 
     for (0..ammountTest) |_| {
         for (&testData.dijkstrasTestDataArray) |*testGraph| {

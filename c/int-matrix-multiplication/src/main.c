@@ -40,7 +40,7 @@ void main() {
     int input1[5][5];
     int input2[5][5];
 
-    int amountTests = 500;
+    int amountTests = 25;
     for (int i = 0; i < amountTests; i++) {
         int j = 0;
         while (j < 10) {
