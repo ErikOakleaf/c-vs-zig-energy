@@ -15,6 +15,7 @@ typedef unsigned long long uint_64;
 #define UART0_BASE 0x40034000
 
 void resetUart0(); 
+void resetIOBank0();
 void enablePeriClock();
 void functionSelectUart();
 void setBaudRate();

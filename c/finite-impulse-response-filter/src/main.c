@@ -78,6 +78,9 @@ void firFilterInt(const uint32_t in[], uint32_t out[], uint32_t inputLength, con
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     uint32_t output[OUTPUTSIZE];
     timerInit();
     uint64_t initTime = readTime();
@@ -86,6 +89,8 @@ void main() {
     volatile uint32_t(*dummySink)[OUTPUTSIZE] = &dummyArray;
 
     const uint32_t amountTests = 25;
+
+    gpioPin9High();
 
     for (int i = 0; i < amountTests; i++) {
         uint32_t inData[701] = {
@@ -105,6 +110,8 @@ void main() {
             j += 1;
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

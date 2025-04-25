@@ -32,3 +32,16 @@ uint_64 readTime() {
 uint32_t getRandom() {
     return (uint32_t)(read32((volatile uint32_t *)RANDOM_BIT) & 0b1);
 }
+
+void gpioPin9Fsel() {
+    write32((volatile uint32_t *)(0x40014000+ 0x04c), 5);
+    write32((volatile uint32_t *)(0xd0000000 + 0x024), (1 << 9));
+}
+
+void gpioPin9High() {
+    write32((volatile uint32_t *)(0xd0000000 + 0x014), (1 << 9));
+}
+
+void gpioPin9Low() {
+    write32((volatile uint32_t *)(0xd0000000 + 0x018), (1 << 9));
+}

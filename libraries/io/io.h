@@ -16,5 +16,8 @@ uint32_t read32(volatile uint32_t *address);
 void timerInit(); 
 uint_64 readTime(); 
 uint32_t getRandom(); 
+void gpioPin9Fsel(); 
+void gpioPin9High(); 
+void gpioPin9Low(); 
 
 #endif
