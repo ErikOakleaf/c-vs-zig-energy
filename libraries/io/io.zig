@@ -37,3 +37,16 @@ pub fn readTime() u64 {
 pub fn getRandom() usize {
     return @intCast((read32(@ptrFromInt(RANDOM_BIT))) & 0b1);
 }
+
+pub fn gpioPin9Fsel() void {
+    write32(@ptrFromInt(0x40014000 + 0x04c), 5);
+    write32(@ptrFromInt(0xd0000000 + 0x024), (1 << 9));
+}
+
+pub fn gpioPin9High() void {
+    write32(@ptrFromInt(0xd0000000 + 0x014), (1 << 9));
+}
+
+pub fn gpioPin9Low() void {
+    write32(@ptrFromInt(0xd0000000 + 0x018), (1 << 9));
+}
