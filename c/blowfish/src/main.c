@@ -142,6 +142,9 @@ void print64(uint8_t digits[8]) {
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
     uint64_t initTime = readTime();
 
@@ -157,6 +160,9 @@ void main() {
     blowfish_key_setup(key, &keystruct, 5);
 
     uint32_t amountTests = 25;
+
+	gpioPin9High();
+
     for (int i = 0; i < amountTests; i++) {
         for (int j = 100; j < 110; j++) {
             input[0] = j;
@@ -174,6 +180,8 @@ void main() {
             }
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

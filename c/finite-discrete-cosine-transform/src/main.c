@@ -182,6 +182,9 @@ void fdct(int16_t block[], int lx) {
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
     uint64_t initTime = readTime();
 
@@ -189,6 +192,9 @@ void main() {
     volatile int16_t(*dummySink)[64] = &dummyArray;
 
     const uint32_t amountTests = 25;
+
+	gpioPin9High();
+
     for (int i = 0; i < amountTests; i++) {
         int16_t j = 0;
         while (j < 10) {
@@ -208,6 +214,9 @@ void main() {
             j += 1;
         }
     }
+
+
+	gpioPin9Low();
 
     const uint64_t finishTime = readTime() - initTime;
 

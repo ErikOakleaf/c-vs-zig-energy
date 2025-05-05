@@ -27,6 +27,9 @@ fn testChecksum(result: *const [5][5]i32, checksum: i32) void {
 }
 
 export fn main() linksection(".main") void {
+    uart.resetIOBank0();
+    io.gpioPin9Fsel();
+
     io.timerInit();
     const initTime: u64 = io.readTime();
 
@@ -39,6 +42,9 @@ export fn main() linksection(".main") void {
     var result: [5][5]i32 = undefined;
 
     const amountTest: usize = 25;
+
+    io.gpioPin9High();
+
     for (0..amountTest) |_| {
         var i: i32 = 0;
         while (i < 10) : (i += 1) {
@@ -65,6 +71,8 @@ export fn main() linksection(".main") void {
             }
         }
     }
+
+    io.gpioPin9Low();
 
     const finishTime: u64 = io.readTime() - initTime;
 

@@ -208,6 +208,9 @@ fn printHash(hash: [32]u8) void {
 }
 
 export fn main() linksection(".main") void {
+    uart.resetIOBank0();
+    io.gpioPin9Fsel();
+
     io.timerInit();
     const initTime: u64 = io.readTime();
 
@@ -220,6 +223,9 @@ export fn main() linksection(".main") void {
     var ctx: SHA256_CTX = undefined;
 
     const amountTests: u32 = 25;
+
+    io.gpioPin9High();
+
     for (0..amountTests) |_| {
         for (100..110) |i| {
             input[0] = @intCast(i);
@@ -237,6 +243,8 @@ export fn main() linksection(".main") void {
             }
         }
     }
+
+    io.gpioPin9Low();
 
     const finishTime: u64 = io.readTime() - initTime;
 

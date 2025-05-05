@@ -158,6 +158,9 @@ void printPath(int previous[], int destination) {
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
 
     uint64_t initTime = readTime();
@@ -172,6 +175,8 @@ void main() {
     int visited[GRAPH_SIZE];
 
     int amountTests = 25;
+
+	gpioPin9High();
 
     for (int i = 0; i < amountTests; i++) {
         for (int i = 0; i < dijkstrasTestDataArraySize; i++) {
@@ -189,6 +194,8 @@ void main() {
             (*dummySink)[x] = previous[x];
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

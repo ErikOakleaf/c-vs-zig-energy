@@ -306,6 +306,9 @@ fn printHex128(hex: [16]u8) void {
 }
 
 export fn main() linksection(".main") void {
+    uart.resetIOBank0();
+    io.gpioPin9Fsel();
+
     io.timerInit();
     const initTime: u64 = io.readTime();
 
@@ -318,6 +321,8 @@ export fn main() linksection(".main") void {
 
     const amountTests: u32 = 25;
     var block: Aes256Blk = undefined;
+
+    io.gpioPin9High();
 
     for (0..amountTests) |_| {
         for (100..110) |i| {
@@ -351,6 +356,8 @@ export fn main() linksection(".main") void {
             aes256_done(&ctx);
         }
     }
+
+    io.gpioPin9Low();
 
     const finishTime: u64 = io.readTime() - initTime;
 

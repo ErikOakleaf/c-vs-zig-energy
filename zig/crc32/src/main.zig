@@ -22,6 +22,9 @@ fn crc32(input: []u8, output: *u32) void {
 }
 
 export fn main() linksection(".main") void {
+    uart.resetIOBank0();
+    io.gpioPin9Fsel();
+
     io.timerInit();
     const initTime: u64 = io.readTime();
 
@@ -32,6 +35,9 @@ export fn main() linksection(".main") void {
     var input: [10]u8 = undefined;
 
     const amountTests: u32 = 25;
+
+    io.gpioPin9High();
+
     for (0..amountTests) |_| {
         for (100..110) |i| {
             input[0] = @intCast(i);
@@ -50,6 +56,8 @@ export fn main() linksection(".main") void {
             dummySink.* = output;
         }
     }
+
+    io.gpioPin9Low();
 
     const finishTime: u64 = io.readTime() - initTime;
 

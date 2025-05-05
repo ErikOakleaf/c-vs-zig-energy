@@ -294,6 +294,9 @@ void printHex128(uint8_t hex[16]) {
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
     uint64_t initTime = readTime();
 
@@ -309,6 +312,9 @@ void main() {
     aes256_blk_t block;
 
     uint32_t amountTests = 25;
+
+	gpioPin9High();
+
     for (int i = 0; i < amountTests; i++) {
         for (int j = 100; j < 110; j++) {
 
@@ -340,6 +346,8 @@ void main() {
             aes256_done(&ctx);
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

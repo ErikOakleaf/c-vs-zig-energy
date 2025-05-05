@@ -56,6 +56,9 @@ void SolveCubic(double a,
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
     uint64_t initTime = readTime();
 
@@ -72,6 +75,9 @@ void main() {
     double output[48];
 
     uint32_t amountTests = 25;
+
+	gpioPin9High();
+
     for (int i = 0; i < amountTests; i++) {
         /* solve some cubic functions */
         /* should get 3 solutions: 2, 6 & 2.5   */
@@ -106,6 +112,8 @@ void main() {
             }
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

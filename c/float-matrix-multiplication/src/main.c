@@ -24,6 +24,9 @@ void generateChecksum(double result[5][5], double *checksum) {
 
 void main(void) __attribute__((section(".main")));
 void main() {
+    resetIOBank0();
+    gpioPin9Fsel();
+
     timerInit();
     uint64_t initTime = readTime();
 
@@ -37,6 +40,9 @@ void main() {
     double input2[5][5];
 
     int amountTests = 25;
+
+	gpioPin9High();
+
     for (int i = 0; i < amountTests; i++) {
         double j = 0.5;
         while (j < 10.5) {
@@ -65,6 +71,8 @@ void main() {
             j += 1;
         }
     }
+
+    gpioPin9Low();
 
     uint64_t finishTime = readTime() - initTime;
 

@@ -186,6 +186,9 @@ fn fdct(block: [*]i16, lx: usize) void {
 }
 
 export fn main() linksection(".main") void {
+    uart.resetIOBank0();
+    io.gpioPin9Fsel();
+
     io.timerInit();
     const initTime: u64 = io.readTime();
 
@@ -193,6 +196,9 @@ export fn main() linksection(".main") void {
     const dummySink: *volatile [64]i16 = &dummyArray;
 
     const amountTests: u32 = 25;
+
+    io.gpioPin9High();
+
     for (0..amountTests) |_| {
         var i: i16 = 0;
         while (i < 10) : (i += 1) {
@@ -210,6 +216,8 @@ export fn main() linksection(".main") void {
             }
         }
     }
+
+    io.gpioPin9Low();
 
     const finishTime: u64 = io.readTime() - initTime;
 
